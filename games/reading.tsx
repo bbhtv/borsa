@@ -5,12 +5,16 @@ import { PRACTICE_TEXTS, TEST_TEXTS, wordCount, type ReadingText } from "@/conte
 import { Quiz } from "@/components/game/Quiz";
 import { BigChoice, Hud, Pill, Stage, sfx, useTimers, type GameOutcome, type GameProps } from "@/components/game/kit";
 
-function practiceText(seed: number): ReadingText {
+function practiceText(seed: number, custom?: GameProps["customText"]): ReadingText {
+  if (custom) return { id: "kendi-metnim", title: custom.title, body: custom.body, questions: [] };
   return PRACTICE_TEXTS[Math.abs(seed) % PRACTICE_TEXTS.length];
 }
 
+/** inline style for .read-text with a base size and line height */
+const RS = (base: number, lh: number) => ({ ["--read-base" as string]: `${base}px`, ["--read-lh" as string]: lh }) as React.CSSProperties;
+
 function practiceOutcome(text: ReadingText, wpm: number, seconds: number, correct: number, level: number, mode: string): GameOutcome {
-  const comp = correct / text.questions.length;
+  const comp = text.questions.length ? correct / text.questions.length : 0;
   const words = wordCount(text.body);
   const ers = Math.round(wpm * comp);
   return {
@@ -67,7 +71,7 @@ export function OkumaTesti({ testsTaken, sound, onFinish, level }: GameProps) {
           <article className="mx-auto max-w-2xl px-5 pb-32 pt-6 sm:px-8">
             <h3 className="mb-4 text-2xl font-extrabold sm:text-3xl">{text.title}</h3>
             {text.body.split(/\n\n+/).map((p, i) => (
-              <p key={i} className="mb-4 text-[19px] font-medium leading-[1.75] text-ink sm:text-[20px]">
+              <p key={i} className="read-text mb-4 font-medium text-ink" style={RS(20, 1.75)}>
                 {p}
               </p>
             ))}
@@ -96,7 +100,7 @@ export function OkumaTesti({ testsTaken, sound, onFinish, level }: GameProps) {
         sound={sound}
         title="Metni hatırla – geri dönüş yok"
         onDone={(correct) => {
-          const comp = correct / text.questions.length;
+          const comp = text.questions.length ? correct / text.questions.length : 0;
           const seconds = Math.max(1, secs.current);
           const wpm = Math.round(words / (seconds / 60));
           const ers = Math.round(wpm * comp);
@@ -133,8 +137,8 @@ interface Line {
   last: number;
 }
 
-export function RehberliOkuma({ wpm, seed, sound, level, onFinish }: GameProps) {
-  const text = useMemo(() => practiceText(seed), [seed]);
+export function RehberliOkuma({ wpm, seed, sound, level, onFinish, customText }: GameProps) {
+  const text = useMemo(() => practiceText(seed, customText), [seed, customText]);
   const tokens = useMemo(() => text.body.split(/\s+/).filter(Boolean), [text]);
   const boxRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -169,6 +173,8 @@ export function RehberliOkuma({ wpm, seed, sound, level, onFinish }: GameProps) 
       setLines(out);
     }
     measure();
+    // line breaks change once the web font arrives – measure again then
+    document.fonts?.ready.then(measure).catch(() => {});
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, [tokens]);
@@ -193,7 +199,8 @@ export function RehberliOkuma({ wpm, seed, sound, level, onFinish }: GameProps) 
       if (li + 1 >= lines.length) {
         secs.current = (performance.now() - startAt.current) / 1000;
         sfx.pop(sound);
-        setPhase("quiz");
+        if (customText) onFinish(practiceOutcome(text, wpm, secs.current, 0, level, "kendi-metni"));
+        else setPhase("quiz");
       } else setLi(li + 1);
     }, lineMs(l));
     return () => t.clear(id);
@@ -213,6 +220,11 @@ export function RehberliOkuma({ wpm, seed, sound, level, onFinish }: GameProps) 
 
   const cur = lines[li];
   const curLast = cur?.last ?? -1;
+  // line index of every word – used by the optional "renkli satırlar" setting
+  const lineOf: number[] = [];
+  lines.forEach((l, k) => {
+    for (let w = l.first; w <= l.last; w++) lineOf[w] = k;
+  });
   const progress = lines.length ? Math.max(0, li) / lines.length : 0;
   return (
     <Stage className="!bg-cream">
@@ -226,14 +238,14 @@ export function RehberliOkuma({ wpm, seed, sound, level, onFinish }: GameProps) 
             >
               <div
                 key={li}
-                className="absolute bottom-0 left-0 h-[3px] rounded-full bg-carrot"
+                className="absolute bottom-0 left-0 h-[3px] rounded-full bg-carrot text-night"
                 style={{ width: "100%", animation: `pacer ${lineMs(cur)}ms linear both` }}
               />
             </div>
           )}
-          <p className="relative text-[20px] font-medium leading-[2.1] sm:text-[22px]">
+          <p className="read-text relative font-medium" style={RS(21, 2.1)}>
             {tokens.map((w, i) => (
-              <span key={i} data-w="" className="transition-opacity duration-300" style={{ opacity: i <= curLast ? (cur && i >= cur.first ? 1 : 0.28) : 1 }}>
+              <span key={i} data-w="" className={`transition-opacity duration-300 cl-${(lineOf[i] ?? 0) % 3}`} style={{ opacity: i <= curLast ? (cur && i >= cur.first ? 1 : 0.28) : 1 }}>
                 {w}{" "}
               </span>
             ))}
@@ -248,8 +260,8 @@ export function RehberliOkuma({ wpm, seed, sound, level, onFinish }: GameProps) 
 /* ============================================================
    Blok Okuma – RSVP in meaningful chunks
    ============================================================ */
-export function BlokOkuma({ wpm, seed, sound, level, onFinish }: GameProps) {
-  const text = useMemo(() => practiceText(seed + 3), [seed]);
+export function BlokOkuma({ wpm, seed, sound, level, onFinish, customText }: GameProps) {
+  const text = useMemo(() => practiceText(seed + 3, customText), [seed, customText]);
   const size = level <= 3 ? 2 : level <= 8 ? 3 : 4;
   const chunks = useMemo(() => {
     const ws = text.body.split(/\s+/).filter(Boolean);
@@ -281,7 +293,8 @@ export function BlokOkuma({ wpm, seed, sound, level, onFinish }: GameProps) {
       if (i + 1 >= chunks.length) {
         secs.current = (performance.now() - startAt.current) / 1000;
         sfx.pop(sound);
-        setPhase("quiz");
+        if (customText) onFinish(practiceOutcome(text, wpm, secs.current, 0, level, "kendi-metni"));
+        else setPhase("quiz");
       } else setI(i + 1);
     }, d);
     return () => t.clear(id);
@@ -299,10 +312,10 @@ export function BlokOkuma({ wpm, seed, sound, level, onFinish }: GameProps) {
     <Stage>
       <Hud left={<Pill tone="brand">🧱 {text.title}</Pill>} right={<Pill tone="carrot">⚡ {wpm} k/dk · {size} kelime</Pill>} progress={i / chunks.length} />
       <div className="flex flex-1 items-center justify-center px-4">
-        <div className="relative flex h-56 w-full max-w-3xl items-center justify-center rounded-[28px] border border-line bg-white shadow-card">
-          <span className="absolute left-1/2 top-0 h-6 w-0.5 -translate-x-1/2 bg-carrot" />
-          <span className="absolute bottom-0 left-1/2 h-6 w-0.5 -translate-x-1/2 bg-carrot" />
-          <span className="no-select px-4 text-center font-bold tracking-wide text-ink" style={{ fontSize: "clamp(26px, 5.5vw, 52px)" }}>
+        <div className="relative flex h-56 w-full max-w-3xl items-center justify-center rounded-[28px] border border-line bg-surface shadow-card">
+          <span className="absolute left-1/2 top-0 h-6 w-0.5 -translate-x-1/2 bg-carrot text-night" />
+          <span className="absolute bottom-0 left-1/2 h-6 w-0.5 -translate-x-1/2 bg-carrot text-night" />
+          <span className="no-select px-4 text-center font-bold tracking-wide text-ink" style={{ fontFamily: "var(--read-font)", fontSize: "calc(clamp(26px, 5.5vw, 52px) * var(--read-scale))" }}>
             {chunks[i]?.join(" ")}
           </span>
         </div>
@@ -314,8 +327,8 @@ export function BlokOkuma({ wpm, seed, sound, level, onFinish }: GameProps) {
 /* ============================================================
    Gölgeli Okuma – shaded groups in a narrow column
    ============================================================ */
-export function GolgeOkuma({ wpm, seed, sound, level, onFinish }: GameProps) {
-  const text = useMemo(() => practiceText(seed + 7), [seed]);
+export function GolgeOkuma({ wpm, seed, sound, level, onFinish, customText }: GameProps) {
+  const text = useMemo(() => practiceText(seed + 7, customText), [seed, customText]);
   const size = level <= 4 ? 2 : 3;
   const groups = useMemo(() => {
     const ws = text.body.split(/\s+/).filter(Boolean);
@@ -347,7 +360,8 @@ export function GolgeOkuma({ wpm, seed, sound, level, onFinish }: GameProps) {
       if (i + 1 >= groups.length) {
         secs.current = (performance.now() - startAt.current) / 1000;
         sfx.pop(sound);
-        setPhase("quiz");
+        if (customText) onFinish(practiceOutcome(text, wpm, secs.current, 0, level, "kendi-metni"));
+        else setPhase("quiz");
       } else setI(i + 1);
     }, d);
     return () => t.clear(id);
@@ -366,7 +380,7 @@ export function GolgeOkuma({ wpm, seed, sound, level, onFinish }: GameProps) {
       <Hud dark left={<Pill tone="dark">🌗 {text.title}</Pill>} right={<Pill tone="dark">⚡ {wpm} k/dk</Pill>} progress={i / groups.length} />
       <div ref={scrollRef} className="relative flex-1 overflow-y-auto">
         <div className="relative mx-auto max-w-[360px] px-5 pb-[50vh] pt-[30vh]">
-          <p className="text-[21px] font-semibold leading-[2.05]">
+          <p className="read-text font-semibold" style={RS(21, 2.05)}>
             {groups.map((g, k) => (
               <span
                 key={k}

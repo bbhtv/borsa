@@ -154,7 +154,7 @@ export function Schulte({ level, sound, onFinish }: GameProps) {
   const done = useRef(false);
 
   function tap(v: number) {
-    if (done.current) return;
+    if (done.current || v < next) return;
     const s = stats.current;
     if (v === next) {
       const now = performance.now();
@@ -213,14 +213,14 @@ export function Schulte({ level, sound, onFinish }: GameProps) {
                   tap(v);
                 }}
                 className={`no-select flex items-center justify-center rounded-2xl border border-line text-2xl font-extrabold shadow-card transition sm:text-4xl ${
-                  v < next ? "bg-brand-soft text-brand-dark/40" : wrong === v ? "shake bg-rose-100" : "bg-white hover:bg-cream"
+                  v < next ? "bg-brand-soft text-brand-dark/40" : wrong === v ? "shake bg-rose-100 dark:bg-rose-500/25" : "bg-surface hover:bg-cream"
                 }`}
               >
                 {v}
               </button>
             ))}
           </div>
-          <div className="pointer-events-none absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-carrot" />
+          <div className="pointer-events-none absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-carrot text-night" />
         </div>
       </div>
     </Stage>
@@ -309,7 +309,7 @@ export function AyniMi({ level, sound, onFinish }: GameProps) {
         <Flash kind={fb} />
         <div key={pair.a + pair.b} className="grid w-full max-w-3xl grid-cols-2 gap-3" style={{ animation: "pop .25s both" }}>
           {[pair.a, pair.b].map((w, i) => (
-            <div key={i} className="flex h-36 items-center justify-center rounded-[26px] border border-line bg-white px-2 text-center font-extrabold shadow-card" style={{ fontSize: "clamp(20px,4.5vw,40px)" }}>
+            <div key={i} className="flex h-36 items-center justify-center rounded-[26px] border border-line bg-surface px-2 text-center font-extrabold shadow-card" style={{ fontSize: "clamp(20px,4.5vw,40px)" }}>
               {w}
             </div>
           ))}

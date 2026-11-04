@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "./Logo";
+import { ThemeToggle } from "./Theme";
 
 export interface NavItem {
   href: string;
@@ -11,20 +12,30 @@ export interface NavItem {
   exact?: boolean;
 }
 
+export interface ShellUser {
+  name: string;
+  sub?: string;
+  emoji: string;
+  profileHref: string;
+}
+
+async function logout() {
+  await fetch("/api/auth/logout", { method: "POST" });
+  window.location.href = "/";
+}
+
 export function AppShell({
   nav,
   title,
   subtitle,
-  card,
-  aside,
+  user,
   badges,
   children,
 }: {
   nav: NavItem[];
   title: string;
   subtitle?: string;
-  card?: React.ReactNode;
-  aside?: React.ReactNode;
+  user: ShellUser;
   badges?: React.ReactNode;
   children: React.ReactNode;
 }) {
@@ -33,11 +44,10 @@ export function AppShell({
   return (
     <div className="flex min-h-dvh bg-bg">
       {/* desktop sidebar */}
-      <aside className="sticky top-0 hidden h-dvh w-[272px] shrink-0 flex-col gap-5 overflow-y-auto border-r border-line bg-white px-4 py-6 lg:flex">
+      <aside className="no-print sticky top-0 hidden h-dvh w-[264px] shrink-0 flex-col gap-6 overflow-y-auto border-r border-line bg-surface px-4 py-6 lg:flex">
         <Link href={nav[0].href} className="self-start px-2">
           <Logo height={38} />
         </Link>
-        {card}
         <nav className="flex flex-col gap-1.5">
           {nav.map((n) => {
             const a = active(n);
@@ -49,40 +59,66 @@ export function AppShell({
                   a ? "border-brand bg-brand-soft text-ink" : "border-transparent text-slate hover:bg-bg"
                 }`}
               >
-                <span className={a ? "text-brand-dark" : "text-muted"}>{n.icon}</span>
+                <span className={a ? "text-brand-dark dark:text-logo" : "text-muted"}>{n.icon}</span>
                 {n.label}
               </Link>
             );
           })}
         </nav>
-        <div className="mt-auto">{aside}</div>
+
+        {/* user chip – bottom left */}
+        <div className="mt-auto flex flex-col gap-2 rounded-[20px] border border-line bg-bg p-2.5">
+          <Link href={user.profileHref} className="flex items-center gap-2.5 rounded-2xl p-1 hover:bg-surface">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-peach text-2xl">{user.emoji}</span>
+            <span className="min-w-0">
+              <span className="block text-[15px] font-extrabold leading-tight [overflow-wrap:anywhere]">{user.name}</span>
+              {user.sub && <span className="block truncate text-[11.5px] font-bold text-muted">{user.sub}</span>}
+            </span>
+          </Link>
+          <div className="grid grid-cols-[1fr_auto] gap-1.5">
+            <ThemeToggle withLabel className="bg-surface text-slate ring-1 ring-line hover:text-ink" />
+            <button
+              type="button"
+              onClick={logout}
+              className="flex h-10 items-center justify-center gap-1.5 rounded-xl bg-surface px-3 text-[13px] font-extrabold text-slate ring-1 ring-line transition hover:bg-rose-500 hover:text-white"
+              aria-label="Çıkış yap"
+              title="Çıkış yap"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" x2="9" y1="12" y2="12" /></svg>
+              Çıkış
+            </button>
+          </div>
+        </div>
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* header */}
-        <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-bg/90 px-4 py-3 backdrop-blur lg:border-none lg:px-8 lg:py-5">
+        <header className="no-print sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-bg/90 px-4 py-3 backdrop-blur lg:border-none lg:px-8 lg:py-5">
           <Link href={nav[0].href} className="shrink-0 lg:hidden">
-            <Logo height={22} />
+            <Logo height={22} sub={false} />
           </Link>
           <div className="min-w-0">
-            {subtitle && <p className="hidden truncate text-[13px] font-extrabold text-muted lg:block">{subtitle}</p>}
+            {subtitle && <p className="truncate text-[11.5px] font-extrabold text-muted lg:text-[13px]">{subtitle}</p>}
             <h1 className="truncate text-base font-extrabold leading-tight lg:text-[28px]">{title}</h1>
           </div>
-          <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-1.5 lg:gap-2">{badges}</div>
+          <div className="ml-auto flex shrink-0 items-center justify-end gap-1.5 lg:gap-2">
+            {badges}
+            <ThemeToggle className="bg-surface text-slate shadow-card ring-1 ring-line lg:hidden" />
+          </div>
         </header>
         <main className="flex-1 px-4 pb-28 pt-4 lg:px-8 lg:pb-10">{children}</main>
       </div>
 
       {/* mobile bottom nav */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-40 grid border-t border-line bg-white px-1.5 pt-2 lg:hidden"
+        className="no-print fixed inset-x-0 bottom-0 z-40 grid border-t border-line bg-surface px-1.5 pt-2 lg:hidden"
         style={{ gridTemplateColumns: `repeat(${nav.length}, minmax(0,1fr))`, paddingBottom: "calc(8px + env(safe-area-inset-bottom))" }}
       >
         {nav.map((n) => {
           const a = active(n);
           return (
             <Link key={n.href} href={n.href} className="flex flex-col items-center gap-1 py-0.5">
-              <span className={`flex items-center justify-center rounded-full border-2 px-3.5 py-1 transition ${a ? "border-brand bg-brand-soft text-brand-dark" : "border-transparent text-muted"}`}>
+              <span className={`flex items-center justify-center rounded-full border-2 px-3.5 py-1 transition ${a ? "border-brand bg-brand-soft text-brand-dark dark:text-logo" : "border-transparent text-muted"}`}>
                 {n.icon}
               </span>
               <span className={`text-[11px] ${a ? "font-extrabold text-ink" : "font-bold text-slate"}`}>{n.label}</span>
@@ -95,7 +131,7 @@ export function AppShell({
 }
 
 export function Badge({ children, tone = "white" }: { children: React.ReactNode; tone?: "white" | "peach" | "cyan" | "deep" }) {
-  const cls = { white: "bg-white", peach: "bg-peach", cyan: "bg-brand-soft", deep: "bg-deep text-white" }[tone];
+  const cls = { white: "bg-surface", peach: "bg-peach", cyan: "bg-brand-soft", deep: "bg-deep text-white" }[tone];
   return <span className={`whitespace-nowrap rounded-full border border-line px-2.5 py-1 text-xs font-extrabold shadow-card lg:px-3 lg:py-2 lg:text-[13.5px] ${cls}`}>{children}</span>;
 }
 

@@ -4,13 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AppShell, Badge, Icon } from "@/components/ui/AppShell";
 import { useStudent } from "@/components/student/StudentContext";
-import { levelName, xpForLevel } from "@/lib/engine";
 import { Logo } from "@/components/ui/Logo";
 
 const TITLES: Record<string, string> = {
   "/ogrenci": "Antrenmanım",
   "/ogrenci/egzersizler": "Egzersiz Kütüphanesi",
   "/ogrenci/gelisim": "Gelişim & Analiz",
+  "/ogrenci/okuma-odasi": "Okuma Odası",
   "/ogrenci/profil": "Profil & Ayarlar",
 };
 
@@ -38,40 +38,11 @@ export default function PanelLayout({ children }: { children: React.ReactNode })
   if (!data.profile.placementDone) return <Welcome name={data.user.name} teacher={data.teacherName} />;
 
   const p = data.profile;
-  const need = xpForLevel(p.level);
-  const card = (
-    <div className="flex flex-col gap-2.5 rounded-[22px] border border-line bg-cream p-3.5 shadow-card">
-      <div className="flex items-center gap-2.5">
-        <span className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-peach text-2xl">🐰</span>
-        <div className="min-w-0">
-          <div className="truncate text-[15px] font-extrabold">{data.user.name}</div>
-          <div className="text-xs font-bold text-slate">Seviye {p.level} · {levelName(p.level)}</div>
-        </div>
-      </div>
-      <div className="h-3 overflow-hidden rounded-full border border-line bg-white">
-        <div className="h-full bg-brand transition-all" style={{ width: `${(p.xp / need) * 100}%` }} />
-      </div>
-      <span className="text-[11px] font-extrabold text-slate">{p.xp} / {need} XP · sonraki seviyeye</span>
-    </div>
-  );
-  const aside = (
-    <div className="relative flex flex-col gap-2 overflow-hidden rounded-[24px] bg-deep p-4 text-white shadow-card">
-      <span className="absolute -right-2 -top-3 text-6xl">🥕</span>
-      <span className="max-w-[170px] text-lg font-extrabold leading-tight">
-        Bugün <span className="text-carrot">{data.today.done}/{data.today.total}</span> egzersiz
-      </span>
-      {data.teacherName && <span className="text-xs font-semibold text-white/70">Eğitmenin: {data.teacherName}</span>}
-      <Link href="/ogrenci/calis?mod=gunluk" className="btn-3d mt-1 rounded-2xl bg-carrot py-2.5 text-center text-sm font-extrabold text-ink shadow-[0_4px_0_#E07B00]">
-        Antrenmana devam ⚡
-      </Link>
-    </div>
-  );
   return (
     <AppShell
       title={TITLES[path] || "Tavşan"}
       subtitle={`Hoş geldin, ${data.user.name.split(" ")[0]} 👋`}
-      card={card}
-      aside={aside}
+      user={{ name: data.user.name, sub: [data.user.grade, data.teacherName ? `Eğitmen: ${data.teacherName}` : null].filter(Boolean).join(" · ") || "Öğrenci", emoji: "🐰", profileHref: "/ogrenci/profil" }}
       badges={
         <>
           <Badge tone="peach">🔥 {p.streak} gün</Badge>
@@ -81,6 +52,7 @@ export default function PanelLayout({ children }: { children: React.ReactNode })
       nav={[
         { href: "/ogrenci", label: "Ana Sayfa", icon: Icon.home, exact: true },
         { href: "/ogrenci/egzersizler", label: "Egzersizler", icon: Icon.zap },
+        { href: "/ogrenci/okuma-odasi", label: "Okuma Odası", icon: Icon.book },
         { href: "/ogrenci/gelisim", label: "Gelişim", icon: Icon.chart },
         { href: "/ogrenci/profil", label: "Profil", icon: Icon.user },
       ]}

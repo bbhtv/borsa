@@ -49,8 +49,8 @@ export function Quiz({
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center gap-5 px-4 py-6">
       <div className="flex items-center justify-between">
-        <span className="text-sm font-extrabold uppercase tracking-widest text-brand-dark">{title}</span>
-        <span className="rounded-full bg-white px-3 py-1 text-xs font-extrabold text-ink ring-1 ring-line">
+        <span className="text-sm font-extrabold uppercase tracking-widest text-brand-dark dark:text-logo">{title}</span>
+        <span className="rounded-full bg-surface px-3 py-1 text-xs font-extrabold text-ink ring-1 ring-line">
           {i + 1} / {questions.length}
         </span>
       </div>
@@ -65,12 +65,12 @@ export function Quiz({
               onClick={() => choose(k)}
               className={`flex items-center gap-3 rounded-2xl border-2 px-4 py-4 text-left text-base font-bold transition sm:text-lg ${
                 state === "idle"
-                  ? "border-line bg-white hover:-translate-y-0.5 hover:border-brand"
+                  ? "border-line bg-surface hover:-translate-y-0.5 hover:border-brand"
                   : state === "right"
-                    ? "border-emerald-500 bg-emerald-50"
+                    ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-500/15"
                     : state === "wrong"
-                      ? "shake border-rose-500 bg-rose-50"
-                      : "border-line bg-white opacity-50"
+                      ? "shake border-rose-500 bg-rose-50 dark:bg-rose-500/15"
+                      : "border-line bg-surface opacity-50"
               }`}
             >
               <span

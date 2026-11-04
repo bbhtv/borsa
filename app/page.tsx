@@ -4,6 +4,7 @@ import { Logo } from "@/components/ui/Logo";
 import { HeroDevice } from "@/components/landing/HeroDevice";
 import { ExerciseShowcase } from "@/components/landing/ExerciseShowcase";
 import { GAMES } from "@/lib/catalog";
+import { ThemeToggle } from "@/components/ui/Theme";
 
 export const dynamic = "force-dynamic";
 
@@ -84,7 +85,8 @@ export default async function Landing() {
             <a href="#bilim" className="hover:text-white">Bilim</a>
             <a href="#egitmen" className="hover:text-white">Eğitmenler</a>
           </nav>
-          <Link href={cta.href} className="btn-3d ml-auto rounded-2xl bg-brand px-5 py-2.5 text-sm font-extrabold text-white shadow-[0_4px_0_#07879B] hover:brightness-110 sm:text-base">
+          <ThemeToggle className="ml-auto bg-white/10 text-white hover:bg-white/20" />
+          <Link href={cta.href} className="btn-3d rounded-2xl bg-brand px-5 py-2.5 text-sm font-extrabold text-white shadow-[0_4px_0_#07879B] hover:brightness-110 sm:text-base">
             {cta.label}
           </Link>
         </header>
@@ -132,7 +134,7 @@ export default async function Landing() {
 
       {/* ================= VALUE STRIP ================= */}
       <section className="relative z-10 mx-auto -mt-12 max-w-6xl px-5 sm:px-8">
-        <div className="grid gap-3 rounded-[30px] border border-line bg-white p-4 shadow-lift sm:grid-cols-3 sm:p-5">
+        <div className="grid gap-3 rounded-[30px] border border-line bg-surface p-4 shadow-lift sm:grid-cols-3 sm:p-5">
           {[
             ["📏", "Önce ölçer", "Okuma testi + 4 mini test ile başlangıç seviyesi belirlenir."],
             ["🎛️", "Kendini ayarlar", "Hız, tempo ve zorluk performansa göre her gün yeniden hesaplanır."],
@@ -152,7 +154,7 @@ export default async function Landing() {
       {/* ================= HOW ================= */}
       <section id="nasil" className="mx-auto max-w-6xl scroll-mt-10 px-5 py-24 sm:px-8">
         <div className="mx-auto mb-12 max-w-2xl text-center">
-          <span className="text-sm font-extrabold uppercase tracking-widest text-brand-dark">Nasıl çalışır?</span>
+          <span className="text-sm font-extrabold uppercase tracking-widest text-brand-dark dark:text-logo">Nasıl çalışır?</span>
           <h2 className="mt-2 text-balance text-4xl font-extrabold tracking-tight sm:text-5xl">Üç adımda kişisel antrenman</h2>
         </div>
         <div className="grid gap-5 md:grid-cols-3">
@@ -161,7 +163,7 @@ export default async function Landing() {
             ["02", "Çalış", "Her gün 12 adımlık program: göz ısınması → algı → rehberli okuma → zayıf alana öncelik veren bilişsel oyunlar → kapanış okuması. Tam ekran, odaklı.", "🎯"],
             ["03", "Gelişimi gör", "Okuma hızı, anlama ve etkili okuma hızı ile 4 alanın % gelişimi grafiklerle izlenir. Haftalık ölçüm otomatik eklenir.", "📈"],
           ].map(([n, t, d, e]) => (
-            <div key={n} className="relative flex flex-col gap-3 overflow-hidden rounded-[30px] border border-line bg-white p-7 shadow-card">
+            <div key={n} className="relative flex flex-col gap-3 overflow-hidden rounded-[30px] border border-line bg-surface p-7 shadow-card">
               <span className="absolute right-5 top-4 text-6xl font-extrabold text-bg">{n}</span>
               <span className="relative text-4xl">{e}</span>
               <h3 className="relative text-2xl font-extrabold">{t}</h3>
@@ -172,11 +174,11 @@ export default async function Landing() {
       </section>
 
       {/* ================= DOMAINS ================= */}
-      <section id="alanlar" className="scroll-mt-10 bg-white py-24">
+      <section id="alanlar" className="scroll-mt-10 bg-surface py-24">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <div className="mb-12 grid items-end gap-6 lg:grid-cols-2">
             <div>
-              <span className="text-sm font-extrabold uppercase tracking-widest text-brand-dark">Hesaplama motoru</span>
+              <span className="text-sm font-extrabold uppercase tracking-widest text-brand-dark dark:text-logo">Hesaplama motoru</span>
               <h2 className="mt-2 text-balance text-4xl font-extrabold tracking-tight sm:text-5xl">Sadece hız değil, beynin tamamı.</h2>
             </div>
             <p className="text-lg font-medium leading-relaxed text-slate">
@@ -192,17 +194,43 @@ export default async function Landing() {
                 </span>
                 <h3 className="text-xl font-extrabold">{d.t}</h3>
                 <p className="text-sm font-semibold text-slate">{d.d}</p>
-                <p className="mt-auto rounded-2xl bg-white p-3 text-xs font-bold text-ink ring-1 ring-line">📐 {d.m}</p>
+                <p className="mt-auto rounded-2xl bg-surface p-3 text-xs font-bold text-ink ring-1 ring-line">📐 {d.m}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* ================= PREMIUM ================= */}
+      <section className="mx-auto max-w-6xl px-5 pt-24 sm:px-8">
+        <div className="mx-auto mb-10 max-w-2xl text-center">
+          <span className="text-sm font-extrabold uppercase tracking-widest text-brand-dark dark:text-logo">Premium deneyim</span>
+          <h2 className="mt-2 text-balance text-4xl font-extrabold tracking-tight sm:text-5xl">Egzersizlerin ötesinde</h2>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {[
+            ["📝", "Kendi metnini oku", "Ders kitabından ya da bir makaleden metni yapıştır; rehberli, blok ya da gölgeli modda otomatik hızında okut."],
+            ["📚", "Kitap okuma takibi", "Gerçek kitabını kronometreyle oku, sayfa sayısını gir: gerçek hayattaki okuma hızın ve okuduğun sayfalar kaydedilsin."],
+            ["🔤", "Okuma ayarları", "Lexend ve kitap yazı tipleri, büyük yazı, geniş satır aralığı ve satır geçişini kolaylaştıran renkli satırlar."],
+            ["👀", "Göz molası", "Her 4 egzersizde bir 20 saniyelik 20-20-20 molası: uzağa bak, gözlerini dinlendir."],
+            ["🌙", "Koyu mod", "Akşam çalışmaları için göz yormayan koyu tema; tek dokunuşla ya da cihaz ayarına göre."],
+            ["🖨️", "Rapor & dışa aktarma", "Öğrenci gelişim raporu yazdırılabilir / PDF; eğitmen tüm sınıfı tek tıkla Excel (CSV) olarak indirir."],
+          ].map(([e, t, d]) => (
+            <div key={t} className="flex gap-4 rounded-[26px] border border-line bg-surface p-5 shadow-card">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-soft text-2xl">{e}</span>
+              <div>
+                <h3 className="font-extrabold">{t}</h3>
+                <p className="text-sm font-semibold text-slate">{d}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ================= EXERCISES ================= */}
       <section id="egzersizler" className="mx-auto max-w-7xl scroll-mt-10 px-5 py-24 sm:px-8">
         <div className="mx-auto mb-10 max-w-2xl text-center">
-          <span className="text-sm font-extrabold uppercase tracking-widest text-brand-dark">Egzersiz kütüphanesi</span>
+          <span className="text-sm font-extrabold uppercase tracking-widest text-brand-dark dark:text-logo">Egzersiz kütüphanesi</span>
           <h2 className="mt-2 text-balance text-4xl font-extrabold tracking-tight sm:text-5xl">{GAMES.length} egzersiz, tek bir akıllı program</h2>
           <p className="mt-3 text-lg font-medium text-slate">Her egzersiz başlamadan önce ne yapılacağını ve neden işe yaradığını anlatır; seviyeye göre kendiliğinden zorlaşır.</p>
         </div>
@@ -221,13 +249,13 @@ export default async function Landing() {
             </p>
             <ul className="flex flex-col gap-3">
               {[
-                "Anlama ≥ %80 → antrenman hızı +%6 · %60–80 → +%2 · < %60 → −%6",
+                "Anlama ≥ %80 → antrenman hızı +%4 · %60–80 → +%1,5 · < %60 → −%6 (en fazla ölçülen hızın 1,6 katı)",
                 "Uyarlamalı merdiven yöntemiyle her öğrenci için ~%75 başarı eşiği",
                 "Haftalık ölçüm: farklı metinle hız ve anlama yeniden ölçülür",
                 "Geri dönüşleri azaltan hız rehberi ve kelime grubu (öbek) okuma",
               ].map((x) => (
                 <li key={x} className="flex gap-3 font-semibold text-white/85">
-                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-logo text-sm text-ink">✓</span>
+                  <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-logo text-sm text-night">✓</span>
                   {x}
                 </li>
               ))}
@@ -260,7 +288,7 @@ export default async function Landing() {
       <section id="egitmen" className="mx-auto max-w-6xl scroll-mt-10 px-5 py-24 sm:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="flex flex-col gap-5">
-            <span className="text-sm font-extrabold uppercase tracking-widest text-brand-dark">Eğitmen paneli</span>
+            <span className="text-sm font-extrabold uppercase tracking-widest text-brand-dark dark:text-logo">Eğitmen paneli</span>
             <h2 className="text-balance text-4xl font-extrabold tracking-tight sm:text-5xl">Her öğrenci tek bakışta.</h2>
             <p className="text-lg font-medium leading-relaxed text-slate">
               Öğrenci hesaplarını oluşturun, hepsi otomatik olarak size bağlansın. Başlangıç ve güncel okuma hızını, anlama oranını, dört bilişsel alandaki gelişimi ve günlük
@@ -268,18 +296,18 @@ export default async function Landing() {
             </p>
             <div className="flex flex-wrap gap-2">
               {["Öğrenci ekleme", "Etkinlik atama", "Haftalık ölçüm", "Oturum geçmişi", "% gelişim raporu"].map((x) => (
-                <span key={x} className="rounded-full bg-white px-3 py-1.5 text-sm font-extrabold ring-1 ring-line">{x}</span>
+                <span key={x} className="rounded-full bg-surface px-3 py-1.5 text-sm font-extrabold ring-1 ring-line">{x}</span>
               ))}
             </div>
           </div>
-          <div className="rounded-[30px] border border-line bg-white p-5 shadow-lift">
+          <div className="rounded-[30px] border border-line bg-surface p-5 shadow-lift">
             <div className="flex items-center gap-3">
               <span className="flex h-12 w-12 items-center justify-center rounded-full bg-peach text-2xl">🐰</span>
               <div>
                 <div className="font-extrabold">Deniz Y. · 7. sınıf</div>
                 <div className="text-xs font-bold text-slate">🔥 12 gün · 148 egzersiz</div>
               </div>
-              <span className="ml-auto rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-extrabold text-emerald-700">Bugün aktif</span>
+              <span className="ml-auto rounded-full bg-emerald-100 dark:bg-emerald-500/20 px-2.5 py-1 text-[11px] font-extrabold text-emerald-700 dark:text-emerald-300">Bugün aktif</span>
             </div>
             <div className="mt-4 grid grid-cols-3 gap-2 rounded-2xl bg-bg p-3 text-center">
               {[["Başlangıç", "172"], ["Güncel", "236"], ["Değişim", "+%37"]].map(([l, v]) => (
@@ -303,15 +331,15 @@ export default async function Landing() {
       </section>
 
       {/* ================= FAQ ================= */}
-      <section className="bg-white py-24">
+      <section className="bg-surface py-24">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           <h2 className="mb-8 text-center text-4xl font-extrabold tracking-tight">Sık sorulanlar</h2>
           <div className="flex flex-col gap-3">
             {FAQ.map(([q, a]) => (
-              <details key={q} className="group rounded-[22px] border border-line bg-bg p-5 open:bg-white open:shadow-card">
+              <details key={q} className="group rounded-[22px] border border-line bg-bg p-5 open:bg-surface open:shadow-card">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-lg font-extrabold">
                   {q}
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-brand-dark ring-1 ring-line transition group-open:rotate-45">+</span>
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface text-brand-dark dark:text-logo ring-1 ring-line transition group-open:rotate-45">+</span>
                 </summary>
                 <p className="mt-3 font-medium leading-relaxed text-slate">{a}</p>
               </details>
@@ -328,7 +356,7 @@ export default async function Landing() {
             <span className="text-6xl" style={{ animation: "float 3s ease-in-out infinite" }}>🐰</span>
             <h2 className="text-balance text-4xl font-extrabold tracking-tight sm:text-5xl">Hazırsan, ilk ölçümle başlayalım.</h2>
             <p className="max-w-xl text-lg font-medium text-white/70">Hesabınız eğitmeniniz tarafından oluşturulur. Giriş yaptıktan sonra program sizi adım adım yönlendirir.</p>
-            <Link href={cta.href} className="btn-3d rounded-[20px] bg-carrot px-9 py-4 text-lg font-extrabold text-ink shadow-[0_6px_0_#E07B00]">
+            <Link href={cta.href} className="btn-3d rounded-[20px] bg-carrot px-9 py-4 text-lg font-extrabold text-night shadow-[0_6px_0_#E07B00]">
               {cta.label} →
             </Link>
           </div>
@@ -338,7 +366,7 @@ export default async function Landing() {
       <footer className="border-t border-line py-10">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 sm:flex-row sm:px-8">
           <Logo height={28} />
-          <p className="text-sm font-bold text-muted">© {new Date().getFullYear()} Tavşan Hızlı Okuma · Anlayarak hızlı okuma ve bilişsel gelişim</p>
+          <p className="text-sm font-bold text-muted">© {new Date().getFullYear()} Tavşan · Hızlı Okuma Akademisi · Anlayarak hızlı okuma ve bilişsel gelişim</p>
         </div>
       </footer>
     </div>

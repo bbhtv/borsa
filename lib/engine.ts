@@ -16,8 +16,9 @@
  * so speed gained by guessing is penalised. Reading uses Effective Reading Speed
  * (ERS = words-per-minute × comprehension).
  */
-import { GAME_MAP, LEVEL_NAMES } from "./catalog";
+import { GAME_MAP } from "./catalog";
 import {
+  DEFAULT_READING_PREFS,
   DOMAINS,
   type Domain,
   type DomainReport,
@@ -59,8 +60,6 @@ export function newProfile(userId: string): StudentProfile {
     userId,
     placementDone: false,
     trainingWpm: 180,
-    level: 1,
-    xp: 0,
     streak: 0,
     totalSeconds: 0,
     totalExercises: 0,
@@ -68,14 +67,10 @@ export function newProfile(userId: string): StudentProfile {
     games: {},
     history: [],
     sound: true,
+    readingPrefs: { ...DEFAULT_READING_PREFS },
+    bookLog: [],
+    freeReading: { seconds: 0, words: 0, sessions: 0 },
   };
-}
-
-export function xpForLevel(level: number) {
-  return 150 + 60 * (level - 1);
-}
-export function levelName(level: number) {
-  return LEVEL_NAMES[Math.min(LEVEL_NAMES.length - 1, Math.max(0, level - 1))];
 }
 
 /* ---------- per game improvement ---------- */
@@ -169,8 +164,6 @@ export interface ReadingPayload {
 }
 
 export interface ApplyOutcome {
-  xpGained: number;
-  leveledUp: boolean;
   newTrainingWpm?: number;
   paceChange?: number;
   test?: ReadingTest;
@@ -179,7 +172,7 @@ export interface ApplyOutcome {
 export function applyResult(p: StudentProfile, r: GameResult, reading?: ReadingPayload): ApplyOutcome {
   const now = r.at;
   const today = dayKey(now);
-  const out: ApplyOutcome = { xpGained: 0, leveledUp: false };
+  const out: ApplyOutcome = {};
 
   /* streak */
   if (p.lastActiveDay !== today) {
@@ -241,27 +234,19 @@ export function applyResult(p: StudentProfile, r: GameResult, reading?: ReadingP
     } else {
       /* practice: adapt the pace automatically – the student never sets it */
       const before = p.trainingWpm;
+      // small steps: pacing should stay only a little above the comfortable speed
       let factor = 1;
-      if (comp >= 0.8) factor = 1.06;
-      else if (comp >= 0.6) factor = 1.02;
+      if (comp >= 0.8) factor = 1.04;
+      else if (comp >= 0.6) factor = 1.015;
       else factor = 0.94;
-      const ceiling = Math.max((p.currentWpm || before) * 2.2, 250);
+      // never more than 1.6× the last measured (comprehended) speed – re-tests raise the ceiling
+      const ceiling = Math.max((p.currentWpm || before) * 1.6, 200);
       const floor = Math.max(MIN_WPM, (p.baselineWpm || before) * 0.8);
       p.trainingWpm = clamp(round5(before * factor), floor, Math.min(MAX_WPM, ceiling));
       if (comp >= 0.67) p.bestTrainingWpm = Math.max(p.bestTrainingWpm || 0, wpm);
       out.newTrainingWpm = p.trainingWpm;
       out.paceChange = p.trainingWpm - before;
     }
-  }
-
-  /* XP & level */
-  const xp = Math.round(10 + clamp(r.score, 0, 100) / 5);
-  out.xpGained = xp;
-  p.xp += xp;
-  while (p.xp >= xpForLevel(p.level)) {
-    p.xp -= xpForLevel(p.level);
-    p.level += 1;
-    out.leveledUp = true;
   }
 
   /* history snapshot for charts */

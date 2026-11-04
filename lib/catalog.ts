@@ -1,6 +1,6 @@
 import type { Domain } from "./types";
 
-export type Category = "goz" | "algi" | "dikkat" | "hafiza" | "matematik" | "okuma";
+export type Category = "goz" | "algi" | "dikkat" | "hafiza" | "matematik" | "dil" | "okuma";
 
 export const CATEGORY_LABEL: Record<Category, string> = {
   goz: "Göz Egzersizleri",
@@ -8,16 +8,18 @@ export const CATEGORY_LABEL: Record<Category, string> = {
   dikkat: "Dikkat & Tepki",
   hafiza: "Hafıza",
   matematik: "Zihinsel Matematik",
+  dil: "Dil & Anlama",
   okuma: "Okuma",
 };
 
 export const CATEGORY_COLOR: Record<Category, { bg: string; fg: string }> = {
-  goz: { bg: "#EDE7FE", fg: "#6D4AE8" },
-  algi: { bg: "#DDF8FC", fg: "#0A8FA3" },
-  dikkat: { bg: "#FFEDD5", fg: "#D96A05" },
-  hafiza: { bg: "#FCE7F3", fg: "#BE185D" },
-  matematik: { bg: "#DCFCE7", fg: "#15803D" },
-  okuma: { bg: "#FEF9C3", fg: "#A16207" },
+  goz: { bg: "var(--cat-goz-bg)", fg: "var(--cat-goz-fg)" },
+  algi: { bg: "var(--cat-algi-bg)", fg: "var(--cat-algi-fg)" },
+  dikkat: { bg: "var(--cat-dikkat-bg)", fg: "var(--cat-dikkat-fg)" },
+  hafiza: { bg: "var(--cat-hafiza-bg)", fg: "var(--cat-hafiza-fg)" },
+  matematik: { bg: "var(--cat-matematik-bg)", fg: "var(--cat-matematik-fg)" },
+  dil: { bg: "var(--cat-dil-bg)", fg: "var(--cat-dil-fg)" },
+  okuma: { bg: "var(--cat-okuma-bg)", fg: "var(--cat-okuma-fg)" },
 };
 
 export interface GameMeta {
@@ -393,6 +395,100 @@ export const GAMES: GameMeta[] = [
     why: "Sayısal büyüklükleri ve işlem sonuçlarını hızlıca kestirmek sayı hissini ve hesaplama hızını geliştirir.",
     keys: "← SOL · → SAĞ",
   },
+  /* ---------------- YENİ: DİKKAT ---------------- */
+  {
+    id: "bilgi-avi",
+    title: "Bilgi Avı",
+    emoji: "🔎",
+    category: "dikkat",
+    tag: "Metinde tarama (scanning)",
+    domains: { attention: 1, reaction: 0.4 },
+    seconds: 75,
+    steps: [
+      "Üstte aranacak kelime yazar. Metni baştan okumana gerek yok – gözünle tara.",
+      "Kelimeyi metinde bulunca üzerine dokun.",
+      "Her bulduğunda yeni bir hedef gelir. Yanlış kelimeye dokunmak hata sayılır.",
+    ],
+    why: "Tarama (scanning), belirli bir bilgiyi metnin tamamını okumadan bulma becerisidir ve sınavlarda, araştırmalarda en çok kullanılan okuma stratejilerinden biridir. Bulma süresi ve doğruluk birlikte ölçülür.",
+  },
+  {
+    id: "isaretleme",
+    title: "İşaretleme Testi",
+    emoji: "✏️",
+    category: "dikkat",
+    tag: "Seçici dikkat (d2 tipi)",
+    domains: { attention: 1, reaction: 0.3 },
+    seconds: 75,
+    steps: [
+      "Satırlarda üstünde ve altında küçük çizgiler olan d ve p harfleri var.",
+      "Yalnızca toplam İKİ çizgisi olan d harflerine dokun (üstte 2, altta 2 ya da üstte 1 + altta 1).",
+      "Her sayfa için süren sınırlı; bitirince 'Sonraki sayfa'ya geç.",
+    ],
+    why: "d2 dikkat testinden esinlenen bu görev, benzer uyaranlar arasında hedefi hızla seçmeyi ölçer. Konsantrasyon puanı = doğru işaret − yanlış işaret; atlanan hedefler ayrıca raporlanır.",
+  },
+  /* ---------------- YENİ: HAFIZA ---------------- */
+  {
+    id: "hafiza-kartlari",
+    title: "Hafıza Kartları",
+    emoji: "🃏",
+    category: "hafiza",
+    tag: "Eşleştirme belleği",
+    domains: { memory: 1, attention: 0.3 },
+    seconds: 90,
+    steps: [
+      "Kartlar ters çevrili. İki kart açarak aynı resimleri eşleştir.",
+      "Eşleşmeyen kartlar tekrar kapanır – yerlerini aklında tut.",
+      "Ne kadar az hamlede bitirirsen puanın o kadar yüksek olur.",
+    ],
+    why: "Eşleştirme oyunu görsel-uzamsal kısa süreli belleği ve yer-nesne bağlantısını çalıştırır. Verimlilik = çift sayısı ÷ hamle sayısı olarak hesaplanır.",
+  },
+  /* ---------------- YENİ: DİL & ANLAMA ---------------- */
+  {
+    id: "cumle-dogrulama",
+    title: "Doğru mu, Yanlış mı?",
+    emoji: "✅",
+    category: "dil",
+    tag: "Sessiz okuma verimliliği",
+    domains: { reading: 1, attention: 0.4 },
+    seconds: 90,
+    steps: [
+      "Ekranda kısa cümleler belirecek. Sessizce oku.",
+      "Cümle doğruysa DOĞRU, yanlışsa YANLIŞ butonuna bas.",
+      "90 saniyede olabildiğince çok cümleyi doğru değerlendirmeye çalış.",
+    ],
+    why: "Bu görev, sessiz okuma verimliliğini ölçen TOSREC gibi standart testlerin cümle doğrulama yöntemine dayanır: hem hızlı okumayı hem de anlamayı aynı anda gerektirir. Dakikada doğru cümle sayısı izlenir.",
+    keys: "A = Doğru · L = Yanlış",
+  },
+  {
+    id: "labirent-okuma",
+    title: "Labirent Okuma",
+    emoji: "🧭",
+    category: "dil",
+    tag: "Bağlamdan doğru kelimeyi seç (maze)",
+    domains: { reading: 1, attention: 0.5 },
+    seconds: 120,
+    steps: [
+      "Metni okurken bazı yerlerde üç kelimelik seçenek kutuları göreceksin.",
+      "Cümleye anlamca uyan kelimeye dokunarak okumaya devam et.",
+      "Süre bitene kadar olabildiğince ilerle – hem hız hem doğruluk önemli.",
+    ],
+    why: "'Maze' görevi, okuduğunu anlayarak ilerlemeyi ölçen yaygın bir okuma ölçeğidir: yaklaşık her yedinci kelime üç seçenekle değiştirilir. Doğru seçim için cümlenin anlamını takip etmek gerekir.",
+  },
+  {
+    id: "kelime-ustasi",
+    title: "Kelime Ustası",
+    emoji: "📚",
+    category: "dil",
+    tag: "Eş ve zıt anlamlılar",
+    domains: { memory: 1 },
+    seconds: 60,
+    steps: [
+      "Ekrana bir kelime ve görev gelir: EŞ ANLAMLISI ya da ZIT ANLAMLISI.",
+      "Dört seçenekten doğru olanı seç.",
+      "Doğru yaptıkça daha zor kelimeler gelir.",
+    ],
+    why: "Araştırmalar okuma hızının ve anlamanın merkezinde dil bilgisi ve kelime dağarcığı olduğunu gösterir. Tanıdık kelimeler daha kısa sabitlenmeyle okunur; bu yüzden kelime çalışması gerçek okuma hızına katkı verir.",
+  },
   /* ---------------- OKUMA ---------------- */
   {
     id: "rehberli-okuma",
@@ -470,18 +566,3 @@ export function primaryDomain(g: GameMeta): Domain | "reading" {
   }
   return best;
 }
-
-export const LEVEL_NAMES = [
-  "Yavru Tavşan",
-  "Meraklı Göz",
-  "Sayfa Kaşifi",
-  "Blok Avcısı",
-  "Ritim Ustası",
-  "Odak Savaşçısı",
-  "Çevik Okur",
-  "Hızlı Tavşan",
-  "Şimşek Tavşan",
-  "Rüzgâr Tavşan",
-  "Usta Okur",
-  "Efsane Tavşan",
-];

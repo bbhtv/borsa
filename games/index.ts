@@ -6,6 +6,8 @@ import { AyniMi, Schulte, SimsekKelime } from "./perception";
 import { DurGec, FarkliOlan, KelimeAvi, OkYagmuru, RenkTuzagi, TepkiAvcisi } from "./attention";
 import { DonenKare, HafizaTreni, IsikYolu, KelimeHafizasi, SayiHafizasi } from "./memory";
 import { HangisiBuyuk, RoketSiralama, SayiZinciri, ZihindenHesap } from "./math";
+import { CumleDogrulama, KelimeUstasi, LabirentOkuma } from "./language";
+import { BilgiAvi, HafizaKartlari, IsaretlemeTesti } from "./extra";
 
 export const GAME_COMPONENTS: Record<string, ComponentType<GameProps>> = {
   "sicrayan-tavsan": SicrayanTavsan,
@@ -34,4 +36,10 @@ export const GAME_COMPONENTS: Record<string, ComponentType<GameProps>> = {
   "blok-okuma": BlokOkuma,
   "golge-okuma": GolgeOkuma,
   "okuma-testi": OkumaTesti,
+  "cumle-dogrulama": CumleDogrulama,
+  "labirent-okuma": LabirentOkuma,
+  "kelime-ustasi": KelimeUstasi,
+  "bilgi-avi": BilgiAvi,
+  "hafiza-kartlari": HafizaKartlari,
+  isaretleme: IsaretlemeTesti,
 };

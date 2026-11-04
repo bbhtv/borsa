@@ -6,7 +6,7 @@ import { LoginForm } from "./LoginForm";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Giriş Yap – Tavşan Hızlı Okuma" };
+export const metadata = { title: "Giriş Yap – Tavşan · Hızlı Okuma Akademisi" };
 
 export default async function LoginPage() {
   const s = await getSession();
@@ -47,7 +47,7 @@ export default async function LoginPage() {
         <Link href="/" className="lg:hidden">
           <Logo height={40} />
         </Link>
-        <div className="w-full max-w-md rounded-[32px] border border-line bg-white p-7 shadow-lift sm:p-9" style={{ animation: "fadeUp .5s both" }}>
+        <div className="w-full max-w-md rounded-[32px] border border-line bg-surface p-7 shadow-lift sm:p-9" style={{ animation: "fadeUp .5s both" }}>
           <h2 className="text-3xl font-extrabold">Giriş Yap</h2>
           <p className="mt-1 font-semibold text-slate">Öğrenci ve eğitmen hesapları aynı ekrandan giriş yapar.</p>
           <LoginForm />

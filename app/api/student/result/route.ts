@@ -57,5 +57,5 @@ export async function POST(req: Request) {
   );
   // first placement test creates today's plan
   const plan = await getTodayPlan(u.id, profile);
-  return json({ result, outcome, profile: { level: profile.level, xp: profile.xp, trainingWpm: profile.trainingWpm, streak: profile.streak, placementDone: profile.placementDone }, plan });
+  return json({ result, outcome, profile: { trainingWpm: profile.trainingWpm, streak: profile.streak, placementDone: profile.placementDone }, plan });
 }

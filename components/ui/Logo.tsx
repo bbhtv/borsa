@@ -8,9 +8,9 @@ export function Logo({ white, height = 34, sub = true, className = "" }: { white
       {sub && (
         <span
           className={`font-extrabold uppercase leading-none ${white ? "text-logo" : "text-brand"}`}
-          style={{ fontSize: Math.max(7, height * 0.27), letterSpacing: height * 0.075 }}
+          style={{ fontSize: Math.max(6.5, height * 0.22), letterSpacing: height * 0.045 }}
         >
-          Hızlı Okuma
+          Hızlı Okuma Akademisi
         </span>
       )}
     </span>

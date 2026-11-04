@@ -109,7 +109,7 @@ export function KelimeAvi({ level, sound, onFinish }: GameProps) {
                 tap(c.id);
               }}
               className={`no-select truncate rounded-xl border px-1 py-3 text-sm font-bold transition sm:py-4 sm:text-lg ${
-                c.found ? "border-brand bg-brand text-white" : wrong === c.id ? "shake border-rose-300 bg-rose-100" : "border-line bg-white hover:bg-cream"
+                c.found ? "border-brand bg-brand text-white" : wrong === c.id ? "shake border-rose-300 bg-rose-100 dark:bg-rose-500/25" : "border-line bg-surface hover:bg-cream"
               }`}
             >
               {c.w}
@@ -318,7 +318,7 @@ export function OkYagmuru({ level, sound, onFinish }: GameProps) {
       <Hud left={<Pill tone="brand">Ortadaki ok!</Pill>} right={<TimeLeft left={left} />} progress={1 - left / DURATION} />
       <div className="relative flex flex-1 flex-col items-center justify-center gap-10 px-4">
         <Flash kind={fb} />
-        <div className="flex h-40 w-full max-w-3xl items-center justify-center rounded-[28px] border border-line bg-white shadow-card">
+        <div className="flex h-40 w-full max-w-3xl items-center justify-center rounded-[28px] border border-line bg-surface shadow-card">
           {trial && (
             <span className="no-select font-extrabold tracking-[0.15em] text-ink" style={{ fontSize: "clamp(44px,10vw,96px)", transform: `translateX(${trial.offset}px)` }}>
               {trial.text}
@@ -406,7 +406,7 @@ export function RenkTuzagi({ level, sound, onFinish }: GameProps) {
       <Hud left={<Pill tone="brand">Yazının RENGİNİ seç</Pill>} right={<TimeLeft left={left} />} progress={1 - left / DURATION} />
       <div className="relative flex flex-1 flex-col items-center justify-center gap-10 px-4">
         <Flash kind={fb} />
-        <div key={trial.id} className="flex h-40 w-full max-w-2xl items-center justify-center rounded-[28px] border border-line bg-white shadow-card" style={{ animation: "pop .18s both" }}>
+        <div key={trial.id} className="flex h-40 w-full max-w-2xl items-center justify-center rounded-[28px] border border-line bg-surface shadow-card" style={{ animation: "pop .18s both" }}>
           <span className="no-select font-extrabold tracking-wide" style={{ color: trial.ink.hex, fontSize: "clamp(40px,9vw,80px)" }}>
             {trial.word}
           </span>
@@ -420,7 +420,7 @@ export function RenkTuzagi({ level, sound, onFinish }: GameProps) {
                 e.preventDefault();
                 answer(c.name);
               }}
-              className="btn-3d no-select flex min-h-16 flex-col items-center justify-center gap-1 rounded-2xl border border-line bg-white px-3 py-3 font-extrabold shadow-[0_5px_0_#CBD5D1] active:translate-y-1 active:shadow-none"
+              className="btn-3d no-select flex min-h-16 flex-col items-center justify-center gap-1 rounded-2xl border border-line bg-surface px-3 py-3 font-extrabold shadow-[0_5px_0_var(--color-ridge)] active:translate-y-1 active:shadow-none"
             >
               <span className="h-7 w-7 rounded-full" style={{ background: c.hex }} />
               <span className="text-xs text-slate">{i + 1}</span>
@@ -509,7 +509,7 @@ export function FarkliOlan({ level, sound, onFinish }: GameProps) {
                 e.preventDefault();
                 tap(i);
               }}
-              className={`no-select flex items-center justify-center rounded-xl border border-line font-extrabold ${wrong === i ? "shake bg-rose-100" : "bg-white"}`}
+              className={`no-select flex items-center justify-center rounded-xl border border-line font-extrabold ${wrong === i ? "shake bg-rose-100 dark:bg-rose-500/25" : "bg-surface"}`}
               style={{ fontSize: `clamp(14px, ${30 / g.n}vmin, 44px)` }}
             >
               <span style={{ transform: g.rot ? `rotate(${(i * 37) % 30 - 15}deg)` : undefined }}>{i === g.at ? g.odd : g.base}</span>
@@ -560,6 +560,7 @@ export function TepkiAvcisi({ level, sound, onFinish }: GameProps) {
       return;
     }
     if (state !== "go") return;
+    if (choice && !s) return; // choice mode needs a side (← → or tap a half)
     const rt = performance.now() - goAt.current;
     if (choice && s && s !== side) {
       stats.current.wrongSide += 1;

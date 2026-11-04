@@ -23,7 +23,7 @@ export default function TeacherLibrary() {
       />
       {g && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/60 p-4" onClick={() => setOpen(null)}>
-          <div onClick={(e) => e.stopPropagation()} className="max-h-[90dvh] w-full max-w-xl overflow-y-auto rounded-[28px] bg-white p-6 shadow-lift" style={{ animation: "pop .25s both" }}>
+          <div onClick={(e) => e.stopPropagation()} className="max-h-[90dvh] w-full max-w-xl overflow-y-auto rounded-[28px] bg-surface p-6 shadow-lift" style={{ animation: "pop .25s both" }}>
             <div className="flex items-center gap-3">
               <span className="text-5xl">{g.emoji}</span>
               <div>
@@ -31,13 +31,13 @@ export default function TeacherLibrary() {
                 <p className="font-bold text-slate">{g.tag}</p>
               </div>
             </div>
-            <h4 className="mt-4 text-sm font-extrabold uppercase tracking-widest text-brand-dark">Uygulama</h4>
+            <h4 className="mt-4 text-sm font-extrabold uppercase tracking-widest text-brand-dark dark:text-logo">Uygulama</h4>
             <ol className="mt-2 list-decimal space-y-1 pl-5 font-semibold">
               {g.steps.map((s) => (
                 <li key={s}>{s}</li>
               ))}
             </ol>
-            <h4 className="mt-4 text-sm font-extrabold uppercase tracking-widest text-brand-dark">Bilimsel gerekçe</h4>
+            <h4 className="mt-4 text-sm font-extrabold uppercase tracking-widest text-brand-dark dark:text-logo">Bilimsel gerekçe</h4>
             <p className="mt-1 font-medium leading-relaxed text-slate">{g.why}</p>
             <button onClick={() => setOpen(null)} className="mt-5 w-full rounded-2xl bg-brand py-3 font-extrabold text-white">Kapat</button>
           </div>

@@ -29,7 +29,7 @@ const K = {
   plan: (sid: string, day: string) => `plan:${sid}:${day}`,
   assignments: (sid: string) => `assign:${sid}`,
   results: (sid: string) => `results:${sid}`,
-  seeded: "meta:seeded:v1",
+  seeded: "meta:seeded:v2",
 };
 
 export function publicUser(u: User): PublicUser {
@@ -282,6 +282,14 @@ async function seedSampleHistory(sid: string) {
       applyResult(profile, r, reading);
       if (d > 20) await kv().lpush(K.results(sid), r, 400);
     }
+  }
+  // a few real-book sessions so the reading log is not empty
+  const books = ["Küçük Prens", "Momo", "Şeker Portakalı"];
+  for (let k = 0; k < 6; k++) {
+    const pages = 8 + Math.floor(rnd() * 10);
+    const wpm = Math.round(170 + k * 12 + rnd() * 15);
+    const seconds = Math.round((pages * 250) / wpm * 60);
+    profile.bookLog.unshift({ id: randomUUID(), at: start + (4 + k * 4) * DAY + 20 * 3600000, title: books[k % 3], pages, wordsPerPage: 250, seconds, wpm });
   }
   await saveProfile(profile);
 }

@@ -44,7 +44,7 @@ export default function TeacherHome() {
           ["Ort. hız artışı", fmtPct(avgChange), "⚡"],
           ["Ölçüm bekleyen", String(students.filter((s) => !s.profile.placementDone).length), "📏"],
         ].map(([l, v, e]) => (
-          <div key={l} className="flex items-center gap-3 rounded-[22px] border border-line bg-white p-4 shadow-card">
+          <div key={l} className="flex items-center gap-3 rounded-[22px] border border-line bg-surface p-4 shadow-card">
             <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-soft text-xl">{e}</span>
             <div>
               <div className="text-2xl font-extrabold tabular-nums">{v}</div>
@@ -55,8 +55,11 @@ export default function TeacherHome() {
       </section>
 
       <div className="flex flex-wrap items-center gap-3">
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Öğrenci ara…" className="min-w-0 flex-1 rounded-2xl border-2 border-line bg-white px-4 py-3 font-bold outline-none focus:border-brand sm:max-w-xs" />
-        <button onClick={() => setOpen(true)} className="btn-3d ml-auto rounded-2xl bg-brand px-5 py-3 font-extrabold text-white shadow-[0_5px_0_#07879B]">
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Öğrenci ara…" className="min-w-0 flex-1 rounded-2xl border-2 border-line bg-surface px-4 py-3 font-bold outline-none focus:border-brand sm:max-w-xs" />
+        <a href="/api/teacher/export" className="ml-auto rounded-2xl border border-line bg-surface px-4 py-3 font-extrabold shadow-card hover:border-brand">
+          ⬇️ Sınıf raporu (CSV)
+        </a>
+        <button onClick={() => setOpen(true)} className="btn-3d rounded-2xl bg-brand px-5 py-3 font-extrabold text-white shadow-[0_5px_0_#07879B]">
           + Öğrenci ekle
         </button>
       </div>
@@ -65,7 +68,7 @@ export default function TeacherHome() {
         {list.map((s) => {
           const r = s.reading;
           return (
-            <Link key={s.user.id} href={`/egitmen/ogrenci/${s.user.id}`} className="flex flex-col gap-3 rounded-[26px] border border-line bg-white p-4 shadow-card transition hover:-translate-y-1 hover:shadow-lift">
+            <Link key={s.user.id} href={`/egitmen/ogrenci/${s.user.id}`} className="flex flex-col gap-3 rounded-[26px] border border-line bg-surface p-4 shadow-card transition hover:-translate-y-1 hover:shadow-lift">
               <div className="flex items-center gap-3">
                 <span className="flex h-12 w-12 items-center justify-center rounded-full bg-peach text-2xl">{s.user.demo ? "🧪" : "🐰"}</span>
                 <div className="min-w-0 flex-1">
@@ -73,7 +76,7 @@ export default function TeacherHome() {
                   <div className="truncate text-xs font-bold text-slate">@{s.user.username} {s.user.grade ? `· ${s.user.grade}` : ""}</div>
                 </div>
                 {s.profile.placementDone ? (
-                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${s.profile.lastActiveDay === today ? "bg-emerald-100 text-emerald-700" : "bg-bg text-slate"}`}>
+                  <span className={`rounded-full px-2.5 py-1 text-[11px] font-extrabold ${s.profile.lastActiveDay === today ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300" : "bg-bg text-slate"}`}>
                     {s.profile.lastActiveDay === today ? "Bugün aktif" : s.profile.lastActiveDay ? `Son: ${s.profile.lastActiveDay.slice(5).split("-").reverse().join(".")}` : "–"}
                   </span>
                 ) : (
@@ -112,7 +115,7 @@ export default function TeacherHome() {
             </Link>
           );
         })}
-        {!list.length && <p className="rounded-2xl bg-white p-6 font-bold text-muted">Öğrenci bulunamadı.</p>}
+        {!list.length && <p className="rounded-2xl bg-surface p-6 font-bold text-muted">Öğrenci bulunamadı.</p>}
       </section>
       {open && <AddStudent onClose={() => setOpen(false)} onDone={() => { setOpen(false); load(); }} />}
     </div>
@@ -138,7 +141,7 @@ function AddStudent({ onClose, onDone }: { onClose: () => void; onDone: () => vo
           if (!res.ok) return setErr(d.error);
           onDone();
         }}
-        className="flex w-full max-w-md flex-col gap-3 rounded-[28px] bg-white p-6 shadow-lift"
+        className="flex w-full max-w-md flex-col gap-3 rounded-[28px] bg-surface p-6 shadow-lift"
         style={{ animation: "pop .25s both" }}
       >
         <h3 className="text-xl font-extrabold">Yeni öğrenci</h3>
@@ -147,7 +150,7 @@ function AddStudent({ onClose, onDone }: { onClose: () => void; onDone: () => vo
         <input required value={f.username} onChange={set("username")} placeholder="Kullanıcı adı (ör. ali.k)" className="rounded-2xl border-2 border-line px-4 py-3 font-bold outline-none focus:border-brand" />
         <input required minLength={6} value={f.password} onChange={set("password")} placeholder="Şifre (en az 6 karakter)" className="rounded-2xl border-2 border-line px-4 py-3 font-bold outline-none focus:border-brand" />
         <input value={f.grade} onChange={set("grade")} placeholder="Sınıf (ör. 6. sınıf) – isteğe bağlı" className="rounded-2xl border-2 border-line px-4 py-3 font-bold outline-none focus:border-brand" />
-        {err && <p className="text-sm font-bold text-rose-600">{err}</p>}
+        {err && <p className="text-sm font-bold text-rose-600 dark:text-rose-300">{err}</p>}
         <div className="grid grid-cols-2 gap-2">
           <button type="button" onClick={onClose} className="rounded-2xl border border-line py-3 font-extrabold">Vazgeç</button>
           <button disabled={busy} className="rounded-2xl bg-brand py-3 font-extrabold text-white disabled:opacity-60">{busy ? "Ekleniyor…" : "Ekle"}</button>

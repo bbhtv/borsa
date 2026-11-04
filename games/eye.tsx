@@ -160,6 +160,8 @@ export function KelebekSayaci({ level, wpm, sound, onFinish }: GameProps) {
   const [phase, setPhase] = useState<"brief" | "run" | "answer">("brief");
   const [pos, setPos] = useState<Pt>([0.5, 0.5]);
   const [emoji, setEmoji] = useState<string>(target);
+  const [tick, setTick] = useState(0);
+  const [visible, setVisible] = useState(false);
   const [answer, setAnswer] = useState("");
   const count = useRef(0);
   const shown = useRef(0);
@@ -196,6 +198,9 @@ export function KelebekSayaci({ level, wpm, sound, onFinish }: GameProps) {
       }
       const isT = Math.random() < 0.45;
       setEmoji(isT ? target : other);
+      setTick((k) => k + 1);
+      setVisible(true);
+      t.after(() => setVisible(false), interval * 0.72);
       if (isT) count.current += 1;
       shown.current += 1;
       sfx.tick(sound, isT && level <= 2);
@@ -262,12 +267,15 @@ export function KelebekSayaci({ level, wpm, sound, onFinish }: GameProps) {
       <Hud dark left={<Pill tone="dark">Say: {target}</Pill>} right={<Pill tone="dark">🎵 {Math.round(60000 / interval)} vuruş/dk</Pill>} />
       <div className="flex-1 p-3 sm:p-6">
         <div className="grid-bg relative h-full w-full rounded-[28px] border-2 border-white/10">
-          <div
-            className="absolute -translate-x-1/2 -translate-y-1/2 text-6xl sm:text-7xl"
-            style={{ left: `${pos[0] * 100}%`, top: `${pos[1] * 100}%`, transition: `left ${interval * 0.55}ms ease-in-out, top ${interval * 0.55}ms ease-in-out` }}
-          >
-            {emoji}
-          </div>
+          {visible && (
+            <div
+              key={tick}
+              className="absolute -translate-x-1/2 -translate-y-1/2 text-6xl sm:text-7xl"
+              style={{ left: `${pos[0] * 100}%`, top: `${pos[1] * 100}%` }}
+            >
+              <span className="block" style={{ animation: "pop .16s both" }}>{emoji}</span>
+            </div>
+          )}
         </div>
       </div>
     </Stage>
@@ -536,7 +544,7 @@ export function GenisleyenCerceve({ level, wpm, sound, onFinish }: GameProps) {
             </>
           )}
         </div>
-        <div className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-carrot shadow-[0_0_14px_#FF9F1C]" />
+        <div className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-carrot shadow-[0_0_14px_#FF9F1C] text-night" />
       </div>
       {awaiting && (
         <div className="grid grid-cols-2 gap-3 px-4 pb-5 sm:mx-auto sm:w-[520px]" style={{ animation: "fadeUp .25s both" }}>

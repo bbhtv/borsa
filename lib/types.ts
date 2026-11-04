@@ -89,8 +89,6 @@ export interface StudentProfile {
   trainingWpm: number;
   /** best pace achieved in paced reading with good comprehension */
   bestTrainingWpm?: number;
-  level: number;
-  xp: number;
   streak: number;
   lastActiveDay?: string;
   totalSeconds: number;
@@ -99,6 +97,32 @@ export interface StudentProfile {
   games: Record<string, GameStat>;
   history: DomainSnapshot[];
   sound: boolean;
+  /** reading comfort settings used in every reading screen */
+  readingPrefs: ReadingPrefs;
+  /** real-book reading sessions logged with the timer */
+  bookLog: BookEntry[];
+  /** free reading of the student's own texts */
+  freeReading: { seconds: number; words: number; sessions: number };
+}
+
+export interface ReadingPrefs {
+  font: "jakarta" | "lexend" | "serif";
+  size: "m" | "l" | "xl";
+  spacing: "normal" | "wide";
+  /** BeeLine-style colour gradient across lines to ease return sweeps */
+  colorLines: boolean;
+}
+
+export const DEFAULT_READING_PREFS: ReadingPrefs = { font: "jakarta", size: "m", spacing: "normal", colorLines: false };
+
+export interface BookEntry {
+  id: string;
+  at: number;
+  title: string;
+  pages: number;
+  wordsPerPage: number;
+  seconds: number;
+  wpm: number;
 }
 
 export interface PlanItem {

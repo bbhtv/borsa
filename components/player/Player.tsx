@@ -15,11 +15,9 @@ export interface PlayerItem {
   score?: number;
 }
 
-type Phase = "intro" | "countdown" | "play" | "saving" | "result" | "finished";
+type Phase = "intro" | "countdown" | "play" | "saving" | "result" | "break" | "finished";
 
 interface ServerOutcome {
-  xpGained: number;
-  leveledUp: boolean;
   newTrainingWpm?: number;
   paceChange?: number;
   test?: { wpm: number; comprehension: number; ers: number; kind: string };
@@ -169,7 +167,9 @@ export function Player({
     }
     setIdx(nextIdx);
     setPlayKey((k) => k + 1);
-    setPhase("intro");
+    // 20-20-20 eye rest after every 4 finished exercises in a program
+    const finished = session.length;
+    setPhase(finished > 0 && finished % 4 === 0 ? "break" : "intro");
   }
   function retry() {
     setOutcome(null);
@@ -198,9 +198,15 @@ export function Player({
 
   const doneCount = items.filter((i) => i.done).length;
   const position = idx + 1;
+  const rp = profile.readingPrefs || { font: "jakarta", size: "m", spacing: "normal", colorLines: false };
+  const readVars = {
+    ["--read-font" as string]: rp.font === "lexend" ? "var(--font-lexend), var(--font-sans)" : rp.font === "serif" ? "var(--font-literata), Georgia, serif" : "var(--font-sans)",
+    ["--read-scale" as string]: rp.size === "xl" ? 1.3 : rp.size === "l" ? 1.15 : 1,
+    ["--read-leading" as string]: rp.spacing === "wide" ? 1.15 : 1,
+  } as React.CSSProperties;
 
   return (
-    <div ref={rootRef} className="fixed inset-0 z-50 flex flex-col bg-deep-3 text-ink">
+    <div ref={rootRef} className={`fixed inset-0 z-50 flex flex-col bg-deep-3 text-ink ${rp.colorLines ? "color-lines" : ""}`} style={readVars}>
       {/* ---------- header ---------- */}
       <header className="relative z-20 flex h-14 shrink-0 items-center gap-3 bg-deep px-3 sm:h-16 sm:px-5">
         <Logo white height={24} className="shrink-0" />
@@ -209,13 +215,13 @@ export function Player({
             <>
               <span className="text-xl">{meta.emoji}</span>
               <span className="truncate text-base font-extrabold">{meta.title}</span>
-              <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-white/70">Seviye {level}</span>
+              <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] font-bold text-white/70">Zorluk {level}</span>
             </>
           )}
         </div>
         <div className="ml-auto flex items-center gap-2">
           {mode !== "single" && (
-            <span className="rounded-full bg-carrot px-3 py-1.5 text-sm font-extrabold tabular-nums text-ink" title="Bugünkü egzersiz sırası">
+            <span className="rounded-full bg-carrot px-3 py-1.5 text-sm font-extrabold tabular-nums text-night" title="Bugünkü egzersiz sırası">
               {Math.min(position, items.length)}/{items.length}
             </span>
           )}
@@ -283,7 +289,7 @@ export function Player({
             <Game key={playKey} level={level} wpm={wpm} sound={sound} testsTaken={testsTaken} seed={(profile.games[item.gameId]?.plays || 0) + playKey * 3 + idx} onFinish={onFinish} />
             {phase === "saving" && (
               <div className="absolute inset-0 z-30 flex items-center justify-center bg-deep/60 backdrop-blur-sm">
-                <span className="rounded-2xl bg-white px-6 py-4 text-lg font-extrabold shadow-lift">Sonuç kaydediliyor…</span>
+                <span className="rounded-2xl bg-surface px-6 py-4 text-lg font-extrabold shadow-lift">Sonuç kaydediliyor…</span>
               </div>
             )}
           </div>
@@ -303,6 +309,8 @@ export function Player({
             onExit={exit}
           />
         )}
+
+        {phase === "break" && <EyeBreak onDone={() => setPhase("intro")} />}
 
         {phase === "finished" && <Finished mode={mode} session={session} done={doneCount} total={items.length} onExit={exit} onMore={mode === "single" ? retry : undefined} />}
       </main>
@@ -334,7 +342,7 @@ function Intro({
   return (
     <div className="h-full overflow-y-auto">
       <div className="mx-auto grid max-w-5xl gap-5 px-4 py-6 sm:px-6 sm:py-10 lg:grid-cols-[1.2fr_1fr]" style={{ animation: "fadeUp .4s both" }}>
-        <section className="flex flex-col gap-5 rounded-[32px] border border-line bg-white p-6 shadow-card sm:p-8">
+        <section className="flex flex-col gap-5 rounded-[32px] border border-line bg-surface p-6 shadow-card sm:p-8">
           <div className="flex items-center gap-4">
             <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[26px] text-5xl" style={{ background: cat.bg }}>
               {meta.emoji}
@@ -345,7 +353,7 @@ function Intro({
                   {CATEGORY_LABEL[meta.category]}
                 </span>
                 {source === "teacher" && <span className="rounded-full bg-grape px-2.5 py-0.5 text-[11px] font-extrabold text-white">Eğitmen ödevi</span>}
-                {source === "test" && <span className="rounded-full bg-carrot px-2.5 py-0.5 text-[11px] font-extrabold text-ink">Ölçüm</span>}
+                {source === "test" && <span className="rounded-full bg-carrot px-2.5 py-0.5 text-[11px] font-extrabold text-night">Ölçüm</span>}
               </div>
               <h2 className="text-3xl font-extrabold leading-tight sm:text-4xl">{meta.title}</h2>
               <p className="font-bold text-slate">{meta.tag}</p>
@@ -353,12 +361,12 @@ function Intro({
           </div>
           <div className="flex flex-wrap gap-2">
             <Chip>⏱ ~{Math.round(meta.seconds / 6) / 10 >= 1 ? `${Math.round(meta.seconds / 60)} dk` : `${meta.seconds} sn`}</Chip>
-            {meta.id !== "okuma-testi" && <Chip>📈 Seviye {level}</Chip>}
+            {meta.id !== "okuma-testi" && <Chip>📈 Zorluk {level}/20</Chip>}
             {meta.category === "okuma" && meta.id !== "okuma-testi" && <Chip tone="carrot">⚡ Hızın: {wpm} kelime/dk · otomatik</Chip>}
             {(meta.category === "goz" || meta.id === "genisleyen-cerceve") && <Chip tone="carrot">🎵 Tempo okuma hızına göre ayarlı</Chip>}
           </div>
           <div>
-            <h3 className="mb-3 text-sm font-extrabold uppercase tracking-widest text-brand-dark">Nasıl yapılır?</h3>
+            <h3 className="mb-3 text-sm font-extrabold uppercase tracking-widest text-brand-dark dark:text-logo">Nasıl yapılır?</h3>
             <ol className="flex flex-col gap-3">
               {meta.steps.map((s, i) => (
                 <li key={i} className="flex gap-3">
@@ -398,7 +406,7 @@ function Intro({
               {mode === "onboarding" && meta.id === "okuma-testi" ? "Ölçüme Başla" : "Başla"}
             </button>
             {onSkip && (
-              <button type="button" onClick={onSkip} className="h-11 rounded-2xl text-sm font-extrabold text-slate hover:bg-white">
+              <button type="button" onClick={onSkip} className="h-11 rounded-2xl text-sm font-extrabold text-slate hover:bg-surface">
                 Bu egzersizi sonraya bırak →
               </button>
             )}
@@ -424,7 +432,7 @@ function Ring({ value, size = 150 }: { value: number; size?: number }) {
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg viewBox="0 0 150 150" width={size} height={size} className="-rotate-90">
-        <circle cx="75" cy="75" r={r} fill="none" stroke="#E2EAEC" strokeWidth="12" />
+        <circle cx="75" cy="75" r={r} fill="none" className="stroke-line" strokeWidth="12" />
         <circle cx="75" cy="75" r={r} fill="none" stroke={color} strokeWidth="12" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c * (1 - value / 100)} style={{ transition: "stroke-dashoffset 1s ease-out" }} />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -471,7 +479,7 @@ function Result({
         </div>
         <div className="grid w-full grid-cols-2 gap-3 sm:grid-cols-4">
           {outcome.highlights.map((h) => (
-            <div key={h.label} className="rounded-2xl border border-line bg-white p-3 shadow-card">
+            <div key={h.label} className="rounded-2xl border border-line bg-surface p-3 shadow-card">
               <div className="text-xl font-extrabold">{h.value}</div>
               <div className="text-xs font-bold text-muted">{h.label}</div>
             </div>
@@ -480,12 +488,10 @@ function Result({
         {server && (
           <div className="flex w-full flex-col gap-2">
             <div className="flex flex-wrap justify-center gap-2">
-              <span className="rounded-full bg-peach px-3 py-1.5 text-sm font-extrabold">+{server.xpGained} XP</span>
-              {server.leveledUp && <span className="rounded-full bg-carrot px-3 py-1.5 text-sm font-extrabold">🎉 Yeni seviye!</span>}
               {outcome.nextLevel !== undefined && !isTest && meta.category !== "okuma" && <span className="rounded-full bg-brand-soft px-3 py-1.5 text-sm font-extrabold">Sonraki zorluk: {outcome.nextLevel}</span>}
             </div>
             {server.newTrainingWpm != null && (
-              <p className="rounded-2xl bg-white px-4 py-3 text-sm font-bold text-slate ring-1 ring-line">
+              <p className="rounded-2xl bg-surface px-4 py-3 text-sm font-bold text-slate ring-1 ring-line">
                 {server.paceChange && server.paceChange > 0
                   ? `Anlaman iyi olduğu için antrenman hızın ${server.newTrainingWpm} kelime/dk'ya çıkarıldı (+${server.paceChange}).`
                   : server.paceChange && server.paceChange < 0
@@ -494,7 +500,7 @@ function Result({
               </p>
             )}
             {server.test && (
-              <p className="rounded-2xl bg-white px-4 py-3 text-sm font-bold text-slate ring-1 ring-line">
+              <p className="rounded-2xl bg-surface px-4 py-3 text-sm font-bold text-slate ring-1 ring-line">
                 {server.test.kind === "placement"
                   ? `Başlangıç ölçümün kaydedildi. Tüm egzersiz hızların ${server.test.wpm} kelime/dk ve %${Math.round(server.test.comprehension * 100)} anlama sonucuna göre otomatik ayarlandı.`
                   : "Haftalık ölçümün kaydedildi. Gelişim grafiğin güncellendi."}
@@ -503,7 +509,7 @@ function Result({
           </div>
         )}
         {error && (
-          <div className="w-full rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700 ring-1 ring-rose-200">
+          <div className="w-full rounded-2xl bg-rose-50 dark:bg-rose-500/15 px-4 py-3 text-sm font-bold text-rose-700 dark:text-rose-300 ring-1 ring-rose-200 dark:ring-rose-500/40">
             Sonuç kaydedilemedi: {error}
             <button type="button" onClick={onSaveAgain} className="ml-2 underline">
               Tekrar dene
@@ -513,7 +519,7 @@ function Result({
         <div className="grid w-full gap-3 sm:grid-cols-2">
           {mode === "single" ? (
             <>
-              <button type="button" onClick={onRetry} className="h-14 rounded-2xl border border-line bg-white text-lg font-extrabold shadow-card">
+              <button type="button" onClick={onRetry} className="h-14 rounded-2xl border border-line bg-surface text-lg font-extrabold shadow-card">
                 ↻ Tekrar oyna
               </button>
               <button type="button" onClick={onExit} className="btn-3d h-14 rounded-2xl bg-brand text-lg font-extrabold text-white shadow-[0_6px_0_#07879B]">
@@ -522,7 +528,7 @@ function Result({
             </>
           ) : (
             <>
-              <button type="button" onClick={onExit} className="h-14 rounded-2xl border border-line bg-white text-lg font-extrabold shadow-card">
+              <button type="button" onClick={onExit} className="h-14 rounded-2xl border border-line bg-surface text-lg font-extrabold shadow-card">
                 Panele dön
               </button>
               <button type="button" disabled={!!error} onClick={onNext} className="btn-3d h-14 rounded-2xl bg-brand text-lg font-extrabold text-white shadow-[0_6px_0_#07879B] disabled:opacity-50">
@@ -575,7 +581,7 @@ function Finished({
                   <span className="block truncate font-extrabold">{GAME_MAP[s.gameId]?.title}</span>
                   <span className="block truncate text-xs font-semibold text-white/60">{s.summary}</span>
                 </span>
-                <span className="rounded-full bg-logo px-2.5 py-1 text-sm font-extrabold text-ink">{s.score}</span>
+                <span className="rounded-full bg-logo px-2.5 py-1 text-sm font-extrabold text-night">{s.score}</span>
               </div>
             ))}
           </div>
@@ -591,6 +597,34 @@ function Finished({
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ====================================================================== */
+function EyeBreak({ onDone }: { onDone: () => void }) {
+  const [left, setLeft] = useState(20);
+  useEffect(() => {
+    if (left <= 0) {
+      onDone();
+      return;
+    }
+    const id = setTimeout(() => setLeft((l) => l - 1), 1000);
+    return () => clearTimeout(id);
+  }, [left, onDone]);
+  return (
+    <div className="stage-dark flex h-full flex-col items-center justify-center gap-5 px-6 text-center text-white">
+      <div className="text-7xl" style={{ animation: "float 3s ease-in-out infinite" }}>
+        👀
+      </div>
+      <h2 className="text-3xl font-extrabold">Göz molası</h2>
+      <p className="max-w-md text-lg font-medium text-white/75">
+        Ekrandan başını kaldır ve yaklaşık 6 metre uzaktaki bir noktaya bak. Birkaç kez yavaşça gözlerini kırp. (20-20-20 kuralı)
+      </p>
+      <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-logo text-4xl font-extrabold tabular-nums">{left}</div>
+      <button type="button" onClick={onDone} className="rounded-2xl bg-white/10 px-5 py-3 font-extrabold hover:bg-white/20">
+        Molayı geç →
+      </button>
     </div>
   );
 }

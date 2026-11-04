@@ -3,7 +3,7 @@
 import { CATEGORY_COLOR, CATEGORY_LABEL, GAMES, type Category } from "@/lib/catalog";
 import { DOMAIN_EMOJI, DOMAIN_SHORT, type Domain, type GameStat } from "@/lib/types";
 
-const ORDER: Category[] = ["goz", "algi", "dikkat", "hafiza", "matematik", "okuma"];
+const ORDER: Category[] = ["goz", "algi", "dikkat", "hafiza", "matematik", "dil", "okuma"];
 
 export function ExerciseCard({ id, stat, selected }: { id: string; stat?: GameStat; selected?: boolean }) {
   const g = GAMES.find((x) => x.id === id)!;
@@ -14,15 +14,15 @@ export function ExerciseCard({ id, stat, selected }: { id: string; stat?: GameSt
       style={{ background: c.bg }}
     >
       <div className="flex items-start justify-between">
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-line bg-white text-2xl">{g.emoji}</span>
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-line bg-surface text-2xl">{g.emoji}</span>
         {selected && <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand text-sm font-extrabold text-white">✓</span>}
-        {!selected && stat && <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-extrabold">Sv {stat.level}</span>}
+        {!selected && stat && <span className="rounded-full bg-surface px-2 py-0.5 text-[11px] font-extrabold">Zorluk {stat.level}</span>}
       </div>
       <span className="text-[15px] font-extrabold leading-tight text-ink">{g.title}</span>
       <span className="text-xs font-bold text-slate">{g.tag}</span>
       <div className="mt-auto flex flex-wrap gap-1 pt-1">
         {(Object.keys(g.domains) as (Domain | "reading")[]).map((d) => (
-          <span key={d} className="rounded-full bg-white/80 px-2 py-0.5 text-[10.5px] font-extrabold text-ink">
+          <span key={d} className="rounded-full bg-surface/80 px-2 py-0.5 text-[10.5px] font-extrabold text-ink">
             {d === "reading" ? "📖 Okuma" : `${DOMAIN_EMOJI[d]} ${DOMAIN_SHORT[d]}`}
           </span>
         ))}

@@ -15,6 +15,8 @@ export interface GameProps {
   /** changes every play – used to pick practice texts */
   seed: number;
   onFinish: (o: GameOutcome) => void;
+  /** the student's own text (Okuma Odası) – reading games skip the quiz */
+  customText?: { title: string; body: string };
 }
 
 export interface GameOutcome {
@@ -230,7 +232,7 @@ export function Pill({ children, tone = "light" }: { children: React.ReactNode; 
         ? "bg-brand-soft text-deep"
         : tone === "carrot"
           ? "bg-peach text-ink"
-          : "bg-white text-ink border border-line";
+          : "bg-surface text-ink border border-line";
   return <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full px-3 py-1 text-xs font-extrabold ${cls}`}>{children}</span>;
 }
 
@@ -255,9 +257,9 @@ export function BigChoice({
 }) {
   const map = {
     brand: "bg-brand text-white shadow-[0_6px_0_#07879B]",
-    carrot: "bg-carrot text-ink shadow-[0_6px_0_#E07B00]",
+    carrot: "bg-carrot text-night shadow-[0_6px_0_#E07B00]",
     grape: "bg-grape text-white shadow-[0_6px_0_#5233C4]",
-    white: "bg-white text-ink border border-line shadow-[0_6px_0_#CBD5D1]",
+    white: "bg-surface text-ink border border-line shadow-[0_6px_0_var(--color-ridge)]",
     deep: "bg-deep text-white shadow-[0_6px_0_#06222C]",
   };
   return (
@@ -326,7 +328,7 @@ export function Keypad({
               ? "bg-brand text-white shadow-[0_4px_0_#07879B]"
               : dark
                 ? "bg-white/10 text-white shadow-[0_4px_0_rgba(0,0,0,.35)]"
-                : "border border-line bg-white text-ink shadow-[0_4px_0_#CBD5D1]"
+                : "border border-line bg-surface text-ink shadow-[0_4px_0_var(--color-ridge)]"
           }`}
         >
           {k === "OK" ? "✓" : k}

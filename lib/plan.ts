@@ -70,7 +70,7 @@ export function generatePlan(p: StudentProfile, assignments: Assignment[], day: 
   }
 
   // 4. cognitive games – weakest domains get more slots
-  const closing = pick(["blok-okuma", "golge-okuma"]);
+  const closing = pick(["blok-okuma", "golge-okuma", "labirent-okuma", "cumle-dogrulama"]);
   const slots = Math.max(2, DAILY_SIZE - items.length - teacherItems.length - 1);
   const reps = domainReports(p);
   const order: Domain[] = [...reps]

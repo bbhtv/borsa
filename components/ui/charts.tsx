@@ -65,18 +65,18 @@ export function LineChart({
         </defs>
         {ticks.map((t, i) => (
           <g key={i}>
-            <line x1={P.l} x2={W - P.r} y1={y(t)} y2={y(t)} stroke="#E2EAEC" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-            <text x={P.l - 6} y={y(t) + 4} textAnchor="end" fontSize="11" fontWeight="700" fill="#64748B">
+            <line x1={P.l} x2={W - P.r} y1={y(t)} y2={y(t)} className="stroke-line" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+            <text x={P.l - 6} y={y(t) + 4} textAnchor="end" fontSize="11" fontWeight="700" className="fill-muted">
               {format(t)}
             </text>
           </g>
         ))}
         {baseline != null && (
-          <line x1={P.l} x2={W - P.r} y1={y(baseline)} y2={y(baseline)} stroke="#94A3B8" strokeDasharray="4 4" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+          <line x1={P.l} x2={W - P.r} y1={y(baseline)} y2={y(baseline)} className="stroke-muted" strokeDasharray="4 4" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
         )}
         <path d={area} fill={`url(#g${color.slice(1)})`} />
         <path d={path} fill="none" stroke={color} strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
-        {hover != null && <line x1={x(hover)} x2={x(hover)} y1={P.t} y2={H - P.b} stroke="#0A1128" strokeOpacity=".25" vectorEffect="non-scaling-stroke" />}
+        {hover != null && <line x1={x(hover)} x2={x(hover)} y1={P.t} y2={H - P.b} className="stroke-ink" strokeOpacity=".25" vectorEffect="non-scaling-stroke" />}
         {data.map((d, i) => (
           <g key={i}>
             <rect x={x(i) - (W / data.length) / 2} y={0} width={W / Math.max(1, data.length)} height={H} fill="transparent" onMouseEnter={() => setHover(i)} onClick={() => setHover(i)} />
@@ -84,7 +84,7 @@ export function LineChart({
         ))}
         {data.length <= 12 &&
           data.map((d, i) => (
-            <text key={`l${i}`} x={x(i)} y={H - 8} textAnchor="middle" fontSize="10.5" fontWeight="700" fill="#64748B">
+            <text key={`l${i}`} x={x(i)} y={H - 8} textAnchor="middle" fontSize="10.5" fontWeight="700" className="fill-muted">
               {d.label}
             </text>
           ))}
@@ -94,13 +94,13 @@ export function LineChart({
         {data.map((d, i) => (
           <span
             key={i}
-            className="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white"
+            className="absolute h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-surface"
             style={{ left: `${(x(i) / W) * 100}%`, top: `${(y(d.value) / H) * 100}%`, background: color, transform: `translate(-50%,-50%) scale(${hover === i ? 1.5 : 1})` }}
           />
         ))}
         {h && hover != null && (
           <div
-            className="absolute z-10 -translate-x-1/2 whitespace-nowrap rounded-xl bg-ink px-3 py-2 text-xs font-bold text-white shadow-lift"
+            className="absolute z-10 -translate-x-1/2 whitespace-nowrap rounded-xl bg-night px-3 py-2 text-xs font-bold text-white shadow-lift"
             style={{ left: `${Math.min(85, Math.max(15, (x(hover) / W) * 100))}%`, top: 0 }}
           >
             <div className="text-white/60">{h.label}</div>
@@ -126,7 +126,7 @@ export function Sparkline({ values, color, height = 34 }: { values: number[]; co
   const zeroY = height - 3 - ((0 - min) / (max - min || 1)) * (height - 6);
   return (
     <svg viewBox={`0 0 ${W} ${height}`} className="w-full" style={{ height }} preserveAspectRatio="none">
-      <line x1="0" x2={W} y1={zeroY} y2={zeroY} stroke="#E2EAEC" strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
+      <line x1="0" x2={W} y1={zeroY} y2={zeroY} className="stroke-line" strokeDasharray="3 3" vectorEffect="non-scaling-stroke" />
       <polyline points={pts} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
     </svg>
   );
@@ -157,7 +157,7 @@ export function DomainGrid({ domains, history, compact }: { domains: DomainRepor
         const series = history.map((h) => h.values[d]).filter((x): x is number => typeof x === "number");
         const width = v == null ? 0 : Math.min(100, Math.abs(v));
         return (
-          <div key={d} className="flex flex-col gap-2 rounded-[22px] border border-line bg-white p-4 shadow-card">
+          <div key={d} className="flex flex-col gap-2 rounded-[22px] border border-line bg-surface p-4 shadow-card">
             <div className="flex items-center gap-2">
               <span className="flex h-9 w-9 items-center justify-center rounded-xl text-lg" style={{ background: DOMAIN_COLOR[d] + "1F" }}>
                 {DOMAIN_EMOJI[d]}
@@ -189,11 +189,11 @@ export function DomainGrid({ domains, history, compact }: { domains: DomainRepor
 export function ReadingCard({ reading, dark }: { reading: ReadingReport; dark?: boolean }) {
   const tests = reading.tests;
   return (
-    <div className={`flex flex-col gap-4 rounded-[28px] p-5 shadow-card ${dark ? "bg-gradient-to-br from-deep-2 to-deep text-white" : "border border-line bg-white"}`}>
+    <div className={`flex flex-col gap-4 rounded-[28px] p-5 shadow-card ${dark ? "bg-gradient-to-br from-deep-2 to-deep text-white" : "border border-line bg-surface"}`}>
       <div className="flex items-center justify-between gap-2">
         <span className="text-lg font-extrabold">📖 Okuma Hızı</span>
         {reading.wpmChange != null && (
-          <span className={`rounded-full px-3 py-1 text-xs font-extrabold ${dark ? "bg-logo text-ink" : "bg-brand-soft text-ink"}`}>{fmtPct(reading.wpmChange)} hız</span>
+          <span className={`rounded-full px-3 py-1 text-xs font-extrabold ${dark ? "bg-logo text-night" : "bg-brand-soft text-night"}`}>{fmtPct(reading.wpmChange)} hız</span>
         )}
       </div>
       <div className="grid grid-cols-3 gap-2">
@@ -210,7 +210,7 @@ export function ReadingCard({ reading, dark }: { reading: ReadingReport; dark?: 
         ))}
       </div>
       {tests.length > 0 && (
-        <div className={dark ? "rounded-2xl bg-white p-2" : ""}>
+        <div className={dark ? "rounded-2xl bg-surface p-2" : ""}>
           <LineChart
             height={150}
             color="#0AA5BC"

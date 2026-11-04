@@ -26,7 +26,7 @@ export function HeroDevice() {
       <div className="relative overflow-hidden rounded-[34px] border border-white/15 bg-deep-3 shadow-[0_40px_80px_-30px_rgba(0,0,0,.7)]">
         <div className="flex items-center gap-2 bg-deep px-4 py-3">
           <Image src="/logo-white.png" alt="" width={80} height={21} style={{ height: 18, width: "auto" }} />
-          <span className="ml-auto rounded-full bg-carrot px-2.5 py-1 text-xs font-extrabold text-ink">5/12</span>
+          <span className="ml-auto rounded-full bg-carrot px-2.5 py-1 text-xs font-extrabold text-night">5/12</span>
           <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-white">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"><path d="M3 8V5a2 2 0 0 1 2-2h3" /><path d="M16 3h3a2 2 0 0 1 2 2v3" /><path d="M21 16v3a2 2 0 0 1-2 2h-3" /><path d="M8 21H5a2 2 0 0 1-2-2v-3" /></svg>
           </span>
@@ -48,11 +48,11 @@ export function HeroDevice() {
         </div>
       </div>
       <div className="absolute -left-4 top-1/3 hidden rounded-2xl border border-white/10 bg-white/95 px-4 py-3 shadow-lift sm:block" style={{ animation: "float 5s ease-in-out infinite" }}>
-        <div className="text-[11px] font-extrabold uppercase tracking-wide text-muted">Okuma hızı</div>
-        <div className="text-2xl font-extrabold tabular-nums text-ink">
-          {wpm} <span className="text-sm text-muted">k/dk</span>
+        <div className="text-[11px] font-extrabold uppercase tracking-wide text-[#64748B]">Okuma hızı</div>
+        <div className="text-2xl font-extrabold tabular-nums text-night">
+          {wpm} <span className="text-sm text-[#64748B]">k/dk</span>
         </div>
-        <div className="text-xs font-extrabold text-emerald-600">+%{Math.round((wpm / 186 - 1) * 100)} · anlama %88</div>
+        <div className="text-xs font-extrabold text-emerald-600 dark:text-emerald-300">+%{Math.round((wpm / 186 - 1) * 100)} · anlama %88</div>
       </div>
       <div className="absolute -right-3 -bottom-6 hidden flex-col gap-1.5 rounded-2xl border border-white/10 bg-white/95 p-3 shadow-lift sm:flex" style={{ animation: "float 6s ease-in-out infinite .8s" }}>
         {[
@@ -61,9 +61,9 @@ export function HeroDevice() {
           ["🧠 Hafıza", 18, "#6D4AE8"],
           ["➗ Matematik", 27, "#16A34A"],
         ].map(([l, v, c]) => (
-          <div key={l as string} className="flex items-center gap-2 text-xs font-extrabold text-ink">
+          <div key={l as string} className="flex items-center gap-2 text-xs font-extrabold text-night">
             <span className="w-[86px]">{l}</span>
-            <span className="h-1.5 w-20 overflow-hidden rounded-full bg-bg">
+            <span className="h-1.5 w-20 overflow-hidden rounded-full bg-[#EEF4F5]">
               <span className="block h-full rounded-full" style={{ width: `${(v as number) * 2.5}%`, background: c as string }} />
             </span>
             <span className="w-10 text-right tabular-nums">+%{v}</span>

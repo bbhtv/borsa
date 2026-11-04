@@ -162,12 +162,12 @@ export function RoketSiralama({ level, sound, onFinish }: GameProps) {
                     ? "border-brand-dark bg-brand text-white opacity-60"
                     : wrong === b.id
                       ? "shake border-rose-700 bg-rose-500 text-white"
-                      : "border-[#CBD5D1] bg-white text-ink hover:-translate-y-0.5"
+                      : "border-[var(--color-ridge)] bg-surface text-ink hover:-translate-y-0.5"
                 }`}
                 style={{ left: `${b.x * 100}%`, top: `${b.y * 100}%`, fontSize: b.label.length > 4 ? "clamp(16px,3.4vw,30px)" : "clamp(22px,5vw,44px)", animation: "pop .25s both" }}
               >
                 {b.label}
-                {idx >= 0 && <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-carrot text-xs text-ink">{idx + 1}</span>}
+                {idx >= 0 && <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-carrot text-xs text-night">{idx + 1}</span>}
               </button>
             );
           })}
@@ -375,12 +375,12 @@ export function SayiZinciri({ level, sound, onFinish }: GameProps) {
       <div className="relative flex flex-1 flex-col items-center justify-center gap-5 p-4">
         <Flash kind={fb} />
         {phase === "watch" ? (
-          <div className="flex h-48 w-64 items-center justify-center rounded-[32px] border border-line bg-white text-7xl font-extrabold shadow-card">
+          <div className="flex h-48 w-64 items-center justify-center rounded-[32px] border border-line bg-surface text-7xl font-extrabold shadow-card">
             {shown && <span key={shown + Math.random()} style={{ animation: "pop .18s both" }}>{shown}</span>}
           </div>
         ) : (
           <>
-            <div className="flex min-h-16 min-w-40 items-center justify-center rounded-2xl border border-line bg-white px-6 text-4xl font-extrabold tabular-nums shadow-card">
+            <div className="flex min-h-16 min-w-40 items-center justify-center rounded-2xl border border-line bg-surface px-6 text-4xl font-extrabold tabular-nums shadow-card">
               {phase === "fb" ? (
                 <span>
                   {answer} {parseInt(answer, 10) === chain.result ? "✓" : <span className="text-rose-500">→ {chain.result}</span>}
@@ -409,7 +409,7 @@ function frac(a: number, b: number): Side {
     label: (
       <span className="inline-flex flex-col items-center leading-none">
         <span>{a}</span>
-        <span className="my-1 h-1 w-12 rounded bg-ink" />
+        <span className="my-1 h-1 w-12 rounded bg-night" />
         <span>{b}</span>
       </span>
     ),
@@ -505,7 +505,7 @@ export function HangisiBuyuk({ level, sound, onFinish }: GameProps) {
                 e.preventDefault();
                 answer(i as 0 | 1);
               }}
-              className="btn-3d no-select flex h-52 items-center justify-center rounded-[28px] border border-line bg-white font-extrabold text-ink shadow-[0_8px_0_#CBD5D1] active:translate-y-1 active:shadow-none sm:h-64"
+              className="btn-3d no-select flex h-52 items-center justify-center rounded-[28px] border border-line bg-surface font-extrabold text-ink shadow-[0_8px_0_var(--color-ridge)] active:translate-y-1 active:shadow-none sm:h-64"
               style={{ fontSize: "clamp(34px,7vw,64px)" }}
             >
               {sd.label}

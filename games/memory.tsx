@@ -40,14 +40,12 @@ function rotateIdx(idx: number, n: number, quarter: number) {
 
 export function DonenKare({ level, sound, onFinish }: GameProps) {
   const ROUNDS = 6;
-  const [diff, setDiff] = useState(level);
-  const n = diff <= 4 ? 3 : diff <= 10 ? 4 : 5;
-  const k = n === 3 ? 3 + Math.floor((diff - 1) / 2) : n === 4 ? 4 + Math.floor((diff - 5) / 2) : 6 + Math.floor((diff - 11) / 2);
-  const showMs = clamp(2400 - diff * 70, 1000, 2400);
+  // difficulty adapts between rounds only – the current round keeps its own grid config
+  const diffRef = useRef(level);
   const [round, setRound] = useState(0);
   const [phase, setPhase] = useState<"show" | "hide" | "rotate" | "answer" | "feedback">("show");
-  const [cells, setCells] = useState<number[]>([]);
-  const [quarter, setQuarter] = useState(1);
+  const [cfg, setCfg] = useState<{ n: number; cells: number[]; quarter: number }>({ n: 3, cells: [], quarter: 1 });
+  const { n, cells, quarter } = cfg;
   const [sel, setSel] = useState<number[]>([]);
   const [angle, setAngle] = useState(0);
   const res = useRef({ correctCells: 0, totalCells: 0, perfect: 0, maxK: 0 });
@@ -55,11 +53,14 @@ export function DonenKare({ level, sound, onFinish }: GameProps) {
   const t = useTimers();
 
   useEffect(() => {
-    const kk = Math.min(k, n * n - 2);
-    const c = shuffle(Array.from({ length: n * n }, (_, i) => i)).slice(0, kk);
+    const diff = diffRef.current;
+    const gn = diff <= 4 ? 3 : diff <= 10 ? 4 : 5;
+    const k = gn === 3 ? 3 + Math.floor((diff - 1) / 2) : gn === 4 ? 4 + Math.floor((diff - 5) / 2) : 6 + Math.floor((diff - 11) / 2);
+    const showMs = clamp(2400 - diff * 70, 1000, 2400);
+    const kk = Math.min(k, gn * gn - 2);
+    const c = shuffle(Array.from({ length: gn * gn }, (_, i) => i)).slice(0, kk);
     const q = diff <= 2 ? 1 : randInt(1, 3);
-    setCells(c);
-    setQuarter(q);
+    setCfg({ n: gn, cells: c, quarter: q });
     setSel([]);
     setAngle(0);
     setPhase("show");
@@ -94,12 +95,12 @@ export function DonenKare({ level, sound, onFinish }: GameProps) {
       r.maxK = Math.max(r.maxK, target.length);
       fails.current = 0;
       sfx.good(sound);
-      setDiff((d) => Math.min(20, d + 1));
+      diffRef.current = Math.min(20, diffRef.current + 1);
     } else {
       fails.current += 1;
       sfx.bad(sound);
       if (fails.current >= 2) {
-        setDiff((d) => Math.max(1, d - 1));
+        diffRef.current = Math.max(1, diffRef.current - 1);
         fails.current = 0;
       }
     }
@@ -392,12 +393,12 @@ export function SayiHafizasi({ level, sound, onFinish }: GameProps) {
       <div className="relative flex flex-1 flex-col items-center justify-center gap-5 p-4">
         <Flash kind={fb} />
         {phase === "watch" ? (
-          <div className="flex h-48 w-48 items-center justify-center rounded-[32px] border border-line bg-white text-8xl font-extrabold shadow-card">
+          <div className="flex h-48 w-48 items-center justify-center rounded-[32px] border border-line bg-surface text-8xl font-extrabold shadow-card">
             {cur != null && <span key={Math.random()} style={{ animation: "pop .15s both" }}>{cur}</span>}
           </div>
         ) : (
           <>
-            <div className="flex min-h-16 min-w-48 items-center justify-center rounded-2xl border border-line bg-white px-6 text-4xl font-extrabold tracking-[0.3em] tabular-nums shadow-card">
+            <div className="flex min-h-16 min-w-48 items-center justify-center rounded-2xl border border-line bg-surface px-6 text-4xl font-extrabold tracking-[0.3em] tabular-nums shadow-card">
               {phase === "fb" ? (backward ? [...digits].reverse() : digits).join("") : answer || <span className="tracking-normal text-line">• • •</span>}
             </div>
             <Keypad value={answer} onChange={setAnswer} onSubmit={submit} maxLen={14} />
@@ -510,7 +511,7 @@ export function HafizaTreni({ level, sound, onFinish }: GameProps) {
               <div
                 key={`${i}-${k}`}
                 className={`flex items-center justify-center rounded-2xl border-b-8 font-extrabold transition-all ${
-                  isCur ? "h-28 w-24 border-carrot-dark bg-carrot text-6xl text-ink sm:h-32 sm:w-28" : "h-20 w-16 border-line bg-white text-3xl text-slate/30 sm:h-24 sm:w-20"
+                  isCur ? "h-28 w-24 border-carrot-dark bg-carrot text-6xl text-night sm:h-32 sm:w-28" : "h-20 w-16 border-line bg-surface text-3xl text-slate/30 sm:h-24 sm:w-20"
                 }`}
                 style={isCur ? { animation: "fadeUp .3s both" } : undefined}
               >
@@ -606,7 +607,7 @@ export function KelimeHafizasi({ level, sound, onFinish }: GameProps) {
         <div className="flex flex-1 items-center justify-center p-4">
           <div className="grid w-full max-w-3xl grid-cols-2 gap-2 sm:grid-cols-3">
             {study.map((w) => (
-              <div key={w} className="rounded-2xl border border-line bg-white px-3 py-4 text-center text-lg font-extrabold shadow-card sm:text-xl">
+              <div key={w} className="rounded-2xl border border-line bg-surface px-3 py-4 text-center text-lg font-extrabold shadow-card sm:text-xl">
                 {w}
               </div>
             ))}
@@ -620,7 +621,7 @@ export function KelimeHafizasi({ level, sound, onFinish }: GameProps) {
       <Hud left={<Pill tone="brand">Listede var mıydı?</Pill>} right={<Pill>{i + 1} / {test.length}</Pill>} progress={i / test.length} />
       <div className="relative flex flex-1 flex-col items-center justify-center gap-10 p-4">
         <Flash kind={fb} />
-        <div key={i} className="flex h-40 w-full max-w-xl items-center justify-center rounded-[28px] border border-line bg-white text-5xl font-extrabold shadow-card" style={{ animation: "pop .2s both" }}>
+        <div key={i} className="flex h-40 w-full max-w-xl items-center justify-center rounded-[28px] border border-line bg-surface text-5xl font-extrabold shadow-card" style={{ animation: "pop .2s both" }}>
           {test[i]?.w}
         </div>
         <div className="grid w-full max-w-md grid-cols-2 gap-3">

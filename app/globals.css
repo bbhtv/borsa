@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
 @theme {
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --color-ink: #0a1128;
   --color-bg: #eef4f5;
   --color-brand: #0ab4cc;
@@ -20,6 +22,9 @@
   --color-slate: #475569;
   --color-grape: #6d4ae8;
   --color-grape-dark: #5233c4;
+  --color-surface: #ffffff;
+  --color-night: #0a1128;
+  --color-ridge: #cbd5d1;
   --shadow-card: 0 4px 14px rgba(10, 30, 40, 0.06);
   --shadow-lift: 0 18px 40px -18px rgba(10, 30, 40, 0.35);
   --animate-float: float 6s ease-in-out infinite;
@@ -47,6 +52,59 @@
 @keyframes pulseRing {
   0% { box-shadow: 0 0 0 0 rgba(10, 180, 204, 0.5); }
   100% { box-shadow: 0 0 0 22px rgba(10, 180, 204, 0); }
+}
+
+:root {
+  color-scheme: light;
+  --cat-goz-bg: #ede7fe; --cat-goz-fg: #6d4ae8;
+  --cat-algi-bg: #ddf8fc; --cat-algi-fg: #0a8fa3;
+  --cat-dikkat-bg: #ffedd5; --cat-dikkat-fg: #d96a05;
+  --cat-hafiza-bg: #fce7f3; --cat-hafiza-fg: #be185d;
+  --cat-matematik-bg: #dcfce7; --cat-matematik-fg: #15803d;
+  --cat-okuma-bg: #fef9c3; --cat-okuma-fg: #a16207;
+  --cat-dil-bg: #e0f2fe; --cat-dil-fg: #0369a1;
+  --read-font: var(--font-sans);
+  --read-scale: 1;
+  --read-leading: 1;
+}
+
+/* ---------- dark theme: remap the semantic tokens ---------- */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #07161c;
+  --color-surface: #0e222a;
+  --color-ink: #e6f0f2;
+  --color-line: #1d3640;
+  --color-slate: #a7bac1;
+  --color-muted: #7a939c;
+  --color-cream: #10232a;
+  --color-peach: #3b2b12;
+  --color-brand-soft: #0d3540;
+  --color-ridge: #031016;
+  --shadow-card: 0 4px 14px rgba(0, 0, 0, 0.35);
+  --shadow-lift: 0 18px 40px -18px rgba(0, 0, 0, 0.85);
+  --cat-goz-bg: #221a44; --cat-goz-fg: #b3a1ff;
+  --cat-algi-bg: #0b3440; --cat-algi-fg: #5ed8ea;
+  --cat-dikkat-bg: #3a2410; --cat-dikkat-fg: #ffb066;
+  --cat-hafiza-bg: #3a1428; --cat-hafiza-fg: #f58bbe;
+  --cat-matematik-bg: #0f3020; --cat-matematik-fg: #6ee29a;
+  --cat-okuma-bg: #33300f; --cat-okuma-fg: #f2d25a;
+  --cat-dil-bg: #0b2a3f; --cat-dil-fg: #7cc4f5;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #24414b; }
+
+/* reading comfort settings (font, size, spacing) */
+.read-text {
+  font-family: var(--read-font);
+  font-size: calc(var(--read-base, 20px) * var(--read-scale));
+  line-height: calc(var(--read-lh, 2) * var(--read-leading));
+}
+.color-lines .cl-0 { color: #1d4ed8; } .color-lines .cl-1 { color: #7c3aed; } .color-lines .cl-2 { color: #be185d; }
+[data-theme="dark"] .color-lines .cl-0 { color: #93c5fd; } [data-theme="dark"] .color-lines .cl-1 { color: #c4b5fd; } [data-theme="dark"] .color-lines .cl-2 { color: #f9a8d4; }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff !important; }
 }
 
 html, body {

@@ -11,13 +11,13 @@ export function GameTable({ games }: { games: Record<string, GameStat> }) {
     .sort((a, b) => b[1].plays - a[1].plays);
   if (!rows.length) return <p className="rounded-2xl bg-bg p-4 text-sm font-bold text-muted">Henüz egzersiz yapılmadı.</p>;
   return (
-    <div className="overflow-x-auto rounded-[22px] border border-line bg-white shadow-card">
+    <div className="overflow-x-auto rounded-[22px] border border-line bg-surface shadow-card">
       <table className="w-full min-w-[560px] text-left text-sm">
         <thead className="bg-bg text-xs font-extrabold uppercase tracking-wide text-muted">
           <tr>
             <th className="px-4 py-3">Egzersiz</th>
             <th className="px-3 py-3 text-right">Oturum</th>
-            <th className="px-3 py-3 text-right">Seviye</th>
+            <th className="px-3 py-3 text-right">Zorluk</th>
             <th className="px-3 py-3 text-right">En iyi</th>
             <th className="px-4 py-3 text-right">Gelişim</th>
           </tr>
@@ -56,7 +56,7 @@ export function ResultList({ results }: { results: GameResult[] }) {
       {results.map((r) => {
         const m = GAME_MAP[r.gameId];
         return (
-          <div key={r.id} className="flex items-center gap-3 rounded-2xl border border-line bg-white px-3 py-2.5 shadow-card">
+          <div key={r.id} className="flex items-center gap-3 rounded-2xl border border-line bg-surface px-3 py-2.5 shadow-card">
             <span className="text-xl">{m?.emoji}</span>
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-extrabold">
