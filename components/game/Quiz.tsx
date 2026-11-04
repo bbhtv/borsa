@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { Question } from "@/content/texts";
-import { sfx } from "./kit";
+import { sfx, shuffle } from "./kit";
 
 export function Quiz({
-  questions,
+  questions: raw,
   sound,
   onDone,
   title = "Anlama Soruları",
@@ -15,6 +15,15 @@ export function Quiz({
   onDone: (correct: number) => void;
   title?: string;
 }) {
+  // shuffle answer order every time so the correct option is never predictable
+  const questions = useMemo(
+    () =>
+      raw.map((q) => {
+        const order = shuffle(q.options.map((_, k) => k));
+        return { q: q.q, options: order.map((k) => q.options[k]), a: order.indexOf(q.a) };
+      }),
+    [raw]
+  );
   const [i, setI] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [correct, setCorrect] = useState(0);

@@ -122,7 +122,7 @@ export default function StudentDetail({ params }: { params: Promise<{ id: string
         <h3 className="text-lg font-extrabold">Bilişsel gelişim (başlangıca göre %)</h3>
         <DomainGrid domains={d.domains} history={p.history} />
       </section>
-      <div className="grid gap-5 xl:grid-cols-2">
+      <div className="grid gap-5 2xl:grid-cols-2">
         <section className="flex flex-col gap-3">
           <h3 className="text-lg font-extrabold">Egzersiz bazında</h3>
           <GameTable games={p.games} />

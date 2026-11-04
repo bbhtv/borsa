@@ -77,7 +77,8 @@ function makeBoxes(level: number, round: number): Box[] {
     } while (used.has(value) && guard++ < 30);
     used.add(value);
     const s = slots[i];
-    out.push({ id: i, label, value, x: (s % cols) / cols + 0.03 + Math.random() * 0.08, y: Math.floor(s / cols) / 3 + 0.04 + Math.random() * 0.12 });
+    // 4 columns × 3 rows; box is 21% wide / 22% tall so keep jitter inside the cell
+    out.push({ id: i, label, value, x: (s % cols) * 0.25 + 0.015 + Math.random() * 0.025, y: Math.floor(s / cols) * 0.27 + 0.04 + Math.random() * 0.06 });
   }
   return out;
 }

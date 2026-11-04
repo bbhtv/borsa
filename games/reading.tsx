@@ -150,14 +150,18 @@ export function RehberliOkuma({ wpm, seed, sound, level, onFinish }: GameProps) 
       const box = boxRef.current;
       if (!box) return;
       const spans = Array.from(box.querySelectorAll<HTMLSpanElement>("span[data-w]"));
+      const base = box.getBoundingClientRect();
       const out: Line[] = [];
       spans.forEach((s, i) => {
-        const top = s.offsetTop;
+        // measure relative to the box the band is positioned in (independent of offsetParent)
+        const r = s.getBoundingClientRect();
+        const top = r.top - base.top;
+        const left = r.left - base.left;
         const cur = out[out.length - 1];
         if (!cur || Math.abs(cur.top - top) > 4) {
-          out.push({ top, left: s.offsetLeft, width: s.offsetWidth, height: s.offsetHeight, words: 1, first: i, last: i });
+          out.push({ top, left, width: r.width, height: r.height, words: 1, first: i, last: i });
         } else {
-          cur.width = s.offsetLeft + s.offsetWidth - cur.left;
+          cur.width = left + r.width - cur.left;
           cur.words += 1;
           cur.last = i;
         }
@@ -369,7 +373,7 @@ export function GolgeOkuma({ wpm, seed, sound, level, onFinish }: GameProps) {
                 ref={k === i ? curRef : undefined}
                 className="rounded-md px-0.5 transition-all duration-150"
                 style={{
-                  color: k === i ? "#0A1128" : "rgba(255,255,255,.16)",
+                  color: k === i ? "#0A1128" : k < i ? "rgba(255,255,255,.14)" : "rgba(255,255,255,.24)",
                   background: k === i ? "#19E3F9" : "transparent",
                   boxShadow: k === i ? "0 0 0 4px #19E3F9" : "none",
                 }}

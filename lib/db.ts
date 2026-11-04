@@ -247,7 +247,7 @@ async function seed() {
 async function seedSampleHistory(sid: string) {
   const profile = newProfile(sid);
   const DAY = 86400000;
-  const start = Date.now() - 27 * DAY;
+  const start = Date.now() - 28 * DAY; // last sample day ends a few hours before "now"
   let seedN = 7;
   const rnd = () => {
     seedN = (seedN * 9301 + 49297) % 233280;

@@ -138,7 +138,8 @@ export function readingReport(p: StudentProfile, now = Date.now()): ReadingRepor
     ersChange: tests.length > 1 ? pct(first.ers, last.ers) : null,
     trainingWpm: p.trainingWpm,
     tests,
-    nextTestDue: !!last && now - last.at > 7 * 86400000,
+    // weekly re-test; an unreliable test (comprehension < 40 %) is repeated the next day
+    nextTestDue: !!last && (now - last.at > 7 * 86400000 || (last.comprehension < 0.4 && now - last.at > 20 * 3600000)),
   };
 }
 
@@ -147,6 +148,14 @@ export function overallImprovement(domains: DomainReport[], reading: ReadingRepo
   if (reading.ersChange != null) vals.push(reading.ersChange);
   if (!vals.length) return null;
   return Math.round(mean(vals) * 10) / 10;
+}
+
+/**
+ * Converts a measured speed into a trainable pace. Reading fast without understanding
+ * is skimming, so the pace is scaled by comprehension (80 % → 1.0, 100 % → 1.1, ≤36 % → 0.45).
+ */
+export function comprehensionFactor(comp: number) {
+  return clamp(comp / 0.8, 0.45, 1.1);
 }
 
 /* ---------- applying a finished exercise ---------- */
@@ -222,11 +231,10 @@ export function applyResult(p: StudentProfile, r: GameResult, reading?: ReadingP
         p.placementDone = true;
         p.baselineWpm = wpm;
         p.baselineComp = comp;
-        // start a little above the comfortable pace, but respect comprehension
-        const start = comp >= 0.6 ? wpm * 1.1 : wpm * 0.95;
-        p.trainingWpm = clamp(round5(start), MIN_WPM, MAX_WPM);
+        // start slightly above the comfortable pace – scaled down when comprehension was weak
+        p.trainingWpm = clamp(round5(wpm * comprehensionFactor(comp)), MIN_WPM, MAX_WPM);
       } else if (comp >= 0.6) {
-        p.trainingWpm = clamp(Math.max(p.trainingWpm, round5(wpm * 1.05)), MIN_WPM, MAX_WPM);
+        p.trainingWpm = clamp(Math.max(p.trainingWpm, round5(wpm * Math.min(1.05, comprehensionFactor(comp)))), MIN_WPM, MAX_WPM);
       }
       p.currentWpm = wpm;
       p.currentComp = comp;

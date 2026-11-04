@@ -150,7 +150,7 @@ export function ProgressRing({ value, size = 96, stroke = 12, color = "#FF9F1C",
 /* ---------------- the four domains ---------------- */
 export function DomainGrid({ domains, history, compact }: { domains: DomainReport[]; history: DomainSnapshot[]; compact?: boolean }) {
   return (
-    <div className={`grid gap-3 ${compact ? "grid-cols-2 xl:grid-cols-4" : "grid-cols-1 sm:grid-cols-2 xl:grid-cols-4"}`}>
+    <div className={`grid gap-3 ${compact ? "grid-cols-2" : "grid-cols-1 sm:grid-cols-2 xl:grid-cols-4"}`}>
       {DOMAINS.map((d) => {
         const r = domains.find((x) => x.domain === d);
         const v = r?.improvement ?? null;
@@ -165,9 +165,11 @@ export function DomainGrid({ domains, history, compact }: { domains: DomainRepor
               <span className="text-[13.5px] font-extrabold leading-tight">{DOMAIN_LABEL[d]}</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className={`font-extrabold tabular-nums ${compact ? "text-2xl" : "text-3xl"} ${v != null && v < 0 ? "text-carrot-dark" : "text-ink"}`}>
-                {v == null ? "Ölçülüyor" : fmtPct(v)}
-              </span>
+              {v == null ? (
+                <span className="text-base font-extrabold text-muted">Ölçülüyor…</span>
+              ) : (
+                <span className={`font-extrabold tabular-nums ${compact ? "text-2xl" : "text-3xl"} ${v < 0 ? "text-carrot-dark" : "text-ink"}`}>{fmtPct(v)}</span>
+              )}
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-bg">
               <div className="h-full rounded-full transition-all duration-700" style={{ width: `${width}%`, background: DOMAIN_COLOR[d] }} />
