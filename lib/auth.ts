@@ -1,5 +1,5 @@
 import "server-only";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
 import type { Role } from "./types";
@@ -44,10 +44,12 @@ export async function createSession(s: Session) {
     .setExpirationTime(`${MAX_AGE}s`)
     .sign(secret());
   const jar = await cookies();
+  // Secure only over HTTPS (Vercel); plain http://localhost must still be able to log in
+  const proto = (await headers()).get("x-forwarded-proto");
   jar.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: proto === "https" || !!process.env.VERCEL,
     path: "/",
     maxAge: MAX_AGE,
   });
