@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-ink: #0a1128;
+  --color-bg: #eef4f5;
+  --color-brand: #0ab4cc;
+  --color-brand-dark: #07879b;
+  --color-brand-soft: #ddf8fc;
+  --color-logo: #19e3f9;
+  --color-deep: #0b2e3a;
+  --color-deep-2: #12475a;
+  --color-deep-3: #06222c;
+  --color-carrot: #ff9f1c;
+  --color-carrot-dark: #e07b00;
+  --color-cream: #fff8ec;
+  --color-peach: #ffe8c2;
+  --color-line: #e2eaec;
+  --color-muted: #64748b;
+  --color-slate: #475569;
+  --color-grape: #6d4ae8;
+  --color-grape-dark: #5233c4;
+  --shadow-card: 0 4px 14px rgba(10, 30, 40, 0.06);
+  --shadow-lift: 0 18px 40px -18px rgba(10, 30, 40, 0.35);
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-pop: pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.4) both;
+  --animate-fade-up: fadeUp 0.6s ease-out both;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes fadeUp {
+  0% { transform: translateY(14px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(10, 180, 204, 0.5); }
+  100% { box-shadow: 0 0 0 22px rgba(10, 180, 204, 0); }
+}
+
+html, body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+body { font-family: var(--font-sans); }
+button { cursor: pointer; font-family: inherit; }
+button:disabled { cursor: not-allowed; }
+::selection { background: #19e3f955; }
+::-webkit-scrollbar { height: 6px; width: 8px; }
+::-webkit-scrollbar-thumb { background: #cbd5d1; border-radius: 9px; }
+
+.btn-3d { transition: transform 0.12s, box-shadow 0.12s; }
+.btn-3d:active:not(:disabled) { transform: translateY(4px); }
+.shake { animation: shake 0.35s; }
+.no-select { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.text-balance { text-wrap: balance; }
+.stage-dark { background: radial-gradient(circle at 50% 40%, #0f3a48 0%, #06222c 70%); }
+.grid-bg {
+  background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
